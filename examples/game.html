@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Open World Game (Mobile)</title>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "../build/three.module.js",
+            "three/addons/": "./jsm/"
+        }
+    }
+    </script>
+    <style>
+        body { margin: 0; overflow: hidden; touch-action: none; }
+        
+        /* Touch Controls */
+        #joystick {
+            position: fixed;
+            bottom: 50px;
+            left: 50px;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            touch-action: none;
+        }
+
+        #joystick-handle {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 255, 0.8);
+            border-radius: 50%;
+            left: 30px;
+            top: 30px;
+            transition: 0.1s;
+        }
+
+        /* Buttons */
+        .btn {
+            position: fixed;
+            bottom: 50px;
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 0, 0, 0.7);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 80px;
+            font-size: 20px;
+            color: white;
+            user-select: none;
+        }
+
+        #shoot-btn { right: 50px; }
+        #enter-car-btn { right: 150px; }
+    </style>
+</head>
+<body>
+
+<!-- Joystick -->
+<div id="joystick">
+    <div id="joystick-handle"></div>
+</div>
+
+<!-- Touch Buttons -->
+<div id="shoot-btn" class="btn">🔫</div>
+<div id="enter-car-btn" class="btn">🚗</div>
+
+<script type="module">
+    import * as THREE from "three";
+    import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
+    // Scene Setup
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Lighting
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(10, 20, 10);
+    scene.add(light);
+
+    // Ground
+    const ground = new THREE.Mesh(
+        new THREE.PlaneGeometry(200, 200),
+        new THREE.MeshStandardMaterial({ color: 0x228B22 })
+    );
+    ground.rotation.x = -Math.PI / 2;
+    scene.add(ground);
+
+    // Load 3D Character
+    let player;
+    const loader = new GLTFLoader();
+    loader.load("./models/gltf/RobotExpressive/RobotExpressive.glb", (gltf) => {
+        player = gltf.scene;
+        player.scale.set(1, 1, 1);
+        scene.add(player);
+    });
+
+    // Camera Follow Function
+    function updateCamera() {
+        if (player) {
+            camera.position.lerp(player.position.clone().add(new THREE.Vector3(0, 3, -5)), 0.1);
+            camera.lookAt(player.position);
+        }
+    }
+
+    // Enemies (Basic AI Movement)
+    const enemies = [];
+    function createEnemy(x, z) {
+        const enemy = new THREE.Mesh(
+            new THREE.BoxGeometry(1, 2, 1),
+            new THREE.MeshStandardMaterial({ color: 0xff0000 })
+        );
+        enemy.position.set(x, 1, z);
+        scene.add(enemy);
+        enemies.push(enemy);
+    }
+    createEnemy(5, 5);
+    createEnemy(-5, 5);
+    createEnemy(10, -10);
+
+    function updateEnemies() {
+        enemies.forEach(enemy => {
+            if (player) {
+                const direction = player.position.clone().sub(enemy.position).normalize();
+                enemy.position.add(direction.multiplyScalar(0.02));
+            }
+        });
+    }
+
+    // Cars (Enter & Exit)
+    const cars = [];
+    function createCar(x, z) {
+        const car = new THREE.Mesh(
+            new THREE.BoxGeometry(3, 1.5, 5),
+            new THREE.MeshStandardMaterial({ color: 0x0000ff })
+        );
+        car.position.set(x, 0.75, z);
+        scene.add(car);
+        cars.push(car);
+    }
+    createCar(8, 8);
+    createCar(-8, -8);
+
+    let inCar = false;
+    let currentCar = null;
+    
+    document.getElementById("enter-car-btn").addEventListener("touchstart", () => {
+        cars.forEach(car => {
+            if (player.position.distanceTo(car.position) < 3) {
+                inCar = !inCar;
+                currentCar = inCar ? car : null;
+            }
+        });
+    });
+
+    function updateCar() {
+        if (inCar && currentCar) {
+            currentCar.position.z -= 0.1;
+            camera.position.lerp(currentCar.position.clone().add(new THREE.Vector3(0, 3, -8)), 0.1);
+        }
+    }
+
+    // Gun Shooting System
+    const bullets = [];
+    function shootGun() {
+        const bullet = new THREE.Mesh(
+            new THREE.SphereGeometry(0.2),
+            new THREE.MeshStandardMaterial({ color: 0xffff00 })
+        );
+        bullet.position.copy(player.position);
+        bullet.velocity = new THREE.Vector3(0, 0, -1).applyQuaternion(player.quaternion).multiplyScalar(1);
+        scene.add(bullet);
+        bullets.push(bullet);
+    }
+
+    document.getElementById("shoot-btn").addEventListener("touchstart", shootGun);
+
+    function updateBullets() {
+        bullets.forEach((bullet, index) => {
+            bullet.position.add(bullet.velocity);
+            enemies.forEach((enemy, i) => {
+                if (bullet.position.distanceTo(enemy.position) < 1) {
+                    scene.remove(enemy);
+                    enemies.splice(i, 1);
+                    scene.remove(bullet);
+                    bullets.splice(index, 1);
+                }
+            });
+        });
+    }
+
+    // Touch Joystick Control
+    let joystick = document.getElementById("joystick");
+    let handle = document.getElementById("joystick-handle");
+    let touchStartX = 0, touchStartY = 0;
+    let moveX = 0, moveZ = 0;
+
+    joystick.addEventListener("touchstart", (event) => {
+        const touch = event.touches[0];
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+    });
+
+    joystick.addEventListener("touchmove", (event) => {
+        const touch = event.touches[0];
+        moveX = (touch.clientX - touchStartX) / 50;
+        moveZ = (touch.clientY - touchStartY) / 50;
+
+        handle.style.transform = `translate(${moveX * 20}px, ${moveZ * 20}px)`;
+    });
+
+    joystick.addEventListener("touchend", () => {
+        moveX = 0;
+        moveZ = 0;
+        handle.style.transform = "translate(0px, 0px)";
+    });
+
+    // Game Loop
+    function animate() {
+        requestAnimationFrame(animate);
+
+        player.position.x += moveX * 0.1;
+        player.position.z += moveZ * 0.1;
+
+        updateEnemies();
+        updateBullets();
+        updateCar();
+        updateCamera();
+        renderer.render(scene, camera);
+    }
+    animate();
+</script>
+
+</body>
+</html>
