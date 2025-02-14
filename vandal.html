@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>vandal</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+       body { 
+		margin: 0; 
+		overflow: hidden; 
+		}
+    
+.core {
+        margin: 0px;
+		width: 100%;
+		height: 300px;
+	    position: fixed;		
+	    top: 55px;
+        left: 0px;
+		right: 0px;
+        padding: 0px;
+		opacity: 0.5;
+}
+.earth {
+        margin: 0px;
+		width: 35px;
+		height: 35px;
+	    position: fixed;		
+	    top: 150px;
+        left: 165px;
+		right: 0px;
+        padding: 0px;
+		opacity: 1.5;
+}
+input[type="text"] {
+  font-family: monospace;
+  font-size: 10px;
+  color: peru;
+}
+fieldset{
+	position:absolute
+	top:0;
+	left:0;
+	width:99%;
+	height:99%;
+}
+filterInput {
+        list-style: none;
+        padding: 0px;
+        margin: 0px;
+		position: fixed;
+	    top: 0px;
+        left: 0px;			
+}
+
+.titleInput {
+        margin: 0px;
+	    position: absolute;		
+	    top: 20px;
+        left: 250px;
+        font-size: 1.0em;
+        padding: 0px;
+        animation: fadeIn 0.5s ease-in-out;
+} 
+
+.titleInput:last-child {        
+        margin: 0px;
+	    position: absolute;		
+	    top: 20px;
+        left: 250px;
+        font-size: 1.0em;
+        padding: 0px;
+        border-bottom: none;
+}
+
+@keyframes fadeIn {
+   from {
+        opacity: 0;
+        transform: translateY(-10px);
+}
+   to   {
+        opacity: 1;
+        transform: translateY(0);
+}
+  }
+}  
+</style>
+
+<!--<script 
+type="text/javascript" 
+src="./js/TagCloud.js">
+</script>-->
+
+<script type="importmap">
+    {
+        "imports": {
+			"three": "./build/three.module.js",
+            "three": "./build/three.webgpu.js",
+            "three/webgpu": "./build/three.webgpu.js",
+            "three/tsl": "./build/three.tsl.js",
+            "three/addons/": "./examples/jsm/"
+        }
+    }
+</script>
+
+
+</head>
+<body>
+		<div id="info">
+		<div id="inputWrapper">
+<form
+class="earth"
+id="secure-form-answer"
+action="./vandal.php" 
+method="post">	
+<div id="inputWrapper">
+<input
+class="earth"
+style="position:center;top:50px;left:90px;width:200px;"
+id="filterInput"
+onkeyup="titleInput()"
+autocomplete="true"
+autocorrect="off"  
+autocapitalize="off" 
+spellcheck="true"
+type="text" 
+name="secure-form-answer-Human"
+maxlength="524288" 
+value=""
+aria-label="search"  
+placeholder="Add Keyword to vandalize" 
+x-webkit-speech
+required>
+</div>	
+
+<noscript>
+<label 
+for="secure-form-answer-Human">
+Human
+</label>
+</noscript>
+</form>
+<!-- 
+<a href="./index.html" 
+target="_blank" rel="noopener">
+Go to city</a> Multi Edit Vandalism
+<br>-->
+
+<script>
+function titleInput() {
+	
+  let input = document.getElementById('filterInput').value;
+
+  input = input.toLowerCase();
+
+  let x = document.getElementsByClassName('titleInput');
+ 
+  for (i = 0; i < x.length; i++) {
+
+    if (!x[i].innerHTML.toLowerCase().includes(input)) {
+
+      x[i].style.display = "none";
+
+    }
+
+    else {
+
+      x[i].style.display = "list-item";
+
+    }
+
+  }
+
+var msg = new SpeechSynthesisUtterance(input); window.speechSynthesis.speak(msg);   
+  
+}
+</script>
+
+<div 
+id="filterInput"
+onkeyup="titleInput()" 
+class="content"
+style=" 
+position: absolute;
+padding: 0px;
+margin: 0px;
+top: 30px;
+left: 75px;			
+font-size: 15px;
+color: blue;">
+<!-- <script> var msg = new SpeechSynthesisUtterance('connected'); window.speechSynthesis.speak(msg); </script> -->
+<!-- content -->
+<!--<img src="../img/core.webp" class="core" style="background: transparent;">-->
+<a href="./index.html">
+<img src="../img/ic_close_black_24dp.svg" class="earth" style="top: 250px;left: 170px;background: transparent;">
+</a>
+<iframe 
+    class="content"
+    style="position: absolute;
+padding: 0px;
+margin: 0px;
+top: 234px;
+left: 110px;	
+width: 0vh; 
+height: 0vh; 
+border: none"
+
+        src="http://www.youtube.com/embed?listType=playlist&list=PLwMe8hyy9osKekO6MMcxvX7ZE96SQAEyr&si=yxbZvZtQb2ry3LP7&autoplay=1&autoplay=1"
+    title="playlist" 
+	frameborder="0" 
+	allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+	allowfullscreen
+></iframe>
+ <!--<script 
+type="text/javascript" 
+src="./js/tagcloudlog.js">
+</script>-->
+</div>
+
+
+
+		</div>
+
+<script type="module">
+
+    import * as THREE from 'three';
+    import { color, fog, float, positionWorld, triNoise3D, positionView, normalWorld, uniform } from 'three/tsl';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    let scene, camera, renderer, controls;
+    let buildings = {}; // Store buildings by filename
+
+	
+	
+    function init() {
+        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 600);
+        camera.position.set(30, 15, 50);
+
+        scene = new THREE.Scene();
+
+        // Custom fog
+        const skyColor = color(0xf0f5f5);
+        const groundColor = color(0xd0dee7);
+        const fogNoiseDistance = positionView.z.negate().smoothstep(0, camera.far - 300);
+        const distance = fogNoiseDistance.mul(20).max(4);
+        const alpha = .98;
+        const groundFogArea = float(distance).sub(positionWorld.y).div(distance).pow(3).saturate().mul(alpha);
+
+        const timer = uniform(0).onFrameUpdate((frame) => frame.time);
+        const fogNoiseA = triNoise3D(positionWorld.mul(.005), 0.2, timer);
+        const fogNoiseB = triNoise3D(positionWorld.mul(.01), 0.2, timer.mul(1.2));
+        const fogNoise = fogNoiseA.add(fogNoiseB).mul(groundColor);
+
+        scene.fogNode = fog(fogNoiseDistance.oneMinus().mix(groundColor, fogNoise), groundFogArea);
+        scene.backgroundNode = normalWorld.y.max(0).mix(groundColor, skyColor);
+
+				// builds
+
+				const buildWindows = positionWorld.y.mul( 10 ).floor().mod( 4 ).sign().mix( color( 0x000066 ).add( fogNoiseDistance ), color( 0xffffff ) );
+
+				const buildGeometry = new THREE.BoxGeometry( 1, 1, 1 );
+				const buildMaterial = new THREE.MeshPhongNodeMaterial( {
+					colorNode: buildWindows
+				} );
+
+				const buildMesh = new THREE.InstancedMesh( buildGeometry, buildMaterial, 4000 );
+				scene.add( buildMesh );
+
+				const dummy = new THREE.Object3D();
+				const center = new THREE.Vector3();
+
+				for ( let i = 0; i < buildMesh.count; i ++ ) {
+
+					const scaleY = Math.random() * 7 + .5;
+
+					dummy.position.x = Math.random() * 600 - 300;
+					dummy.position.z = Math.random() * 600 - 300;
+
+					const distance = Math.max( dummy.position.distanceTo( center ) * .012, 1 );
+
+					dummy.position.y = .5 * scaleY * distance;
+
+					dummy.scale.x = dummy.scale.z = Math.random() * 3 + .5;
+					dummy.scale.y = scaleY * distance;
+
+					dummy.updateMatrix();
+
+					buildMesh.setMatrixAt( i, dummy.matrix );
+
+				}
+	
+		
+		
+        // Lights
+        scene.add(new THREE.HemisphereLight(skyColor.value, groundColor.value, 0.5));
+
+        // Ground
+        const planeGeometry = new THREE.PlaneGeometry(200, 200);
+        const planeMaterial = new THREE.MeshPhongMaterial({ color: 0x999999 });
+        const ground = new THREE.Mesh(planeGeometry, planeMaterial);
+        ground.rotation.x = -Math.PI / 2;
+        ground.scale.multiplyScalar(3);
+        ground.castShadow = true;
+        ground.receiveShadow = true;
+        scene.add(ground);
+		
+
+        // Renderer
+        renderer = new THREE.WebGPURenderer({ antialias: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setAnimationLoop(animate);
+        document.body.appendChild(renderer.domElement);
+
+        // Controls
+        controls = new OrbitControls(camera, renderer.domElement);
+        controls.target.set(0, 2, 0);
+        controls.minDistance = 7;
+        controls.maxDistance = 200;
+        controls.maxPolarAngle = Math.PI / 2;
+        controls.autoRotate = false;
+        controls.autoRotateSpeed = .1;
+        controls.update();
+
+        window.addEventListener('resize', resize);
+
+        updateBuildings(); // Initial check
+        setInterval(updateBuildings, 2000); // Poll every 2 seconds
+    }
+
+    function resize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function createBuilding(fileName, index) {
+        let height = Math.random() * 20 + 5;
+        let geometry = new THREE.BoxGeometry(5, height, 5);
+        let material = new THREE.MeshStandardMaterial({ color: Math.random() * 0xffffff });
+        let building = new THREE.Mesh(geometry, material);
+
+        let x = (index % 10) * 6 - 30;
+        let z = Math.floor(index / 10) * 6 - 30;
+        building.position.set(x, height / 2, z);
+
+        scene.add(building);
+        buildings[fileName] = building;
+    }
+
+    function updateBuildings() {
+        fetch("./map.php")
+            .then(response => response.json())
+            .then(files => {
+                let existingFiles = Object.keys(buildings);
+
+                // Add new buildings
+                files.forEach((file, index) => {
+                    if (!buildings[file]) {
+                        createBuilding(file, index);
+                    }
+                });
+
+                // Remove deleted buildings
+                existingFiles.forEach(file => {
+                    if (!files.includes(file)) {
+                        scene.remove(buildings[file]);
+                        delete buildings[file];
+                    }
+                });
+            })
+            .catch(error => console.error("Error fetching files:", error));
+    }
+	
+	
+
+    function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    window.onload = init;
+	
+	
+
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
