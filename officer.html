@@ -194,7 +194,20 @@ color: blue;">
 <a href="./index.html">
 <img src="./img/aim2.png" class="earth" style="top: 250px;left: 170px;background: transparent;">
 </a>
-<iframe 
+    <audio id="audio" autoplay>
+        <source src="./officerradio.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var audio = document.getElementById("audio");
+            audio.play().catch(error => {
+                console.log("Autoplay prevented: ", error);
+            });
+        });
+    </script>
+<!--<iframe 
     class="content"
     style="position: absolute;
 padding: 0px;
@@ -211,7 +224,7 @@ src="https://www.youtube.com/embed?listType=playlist&list=PLwMe8hyy9osIsMqTrT_7S
 	frameborder="0" 
 	allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
 	allowfullscreen
-></iframe>
+></iframe>-->
  <!--<script 
 type="text/javascript" 
 src="./js/tagcloudlog.js">
