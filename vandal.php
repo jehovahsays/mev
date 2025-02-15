@@ -66,13 +66,14 @@ foreach($_POST as $variable => $value)
 	. "</title>"
 	. "</head>"
 	. "<body>"
-	. "<a href="
+	. "<br><a href="
 	. "\""
 	. "../index.html"
 	. "\""
-	. "><button>Open map</button></a><br><br>"
-	. "<br><br>" 
-	. "<a href="
+	. "><center><button>Menu</button></center></a>"
+	. "<br><br>"
+	. "$value is not protected"
+	. "<br><br><a href="
 	. "\"" 
 	. "../delete.php?action=delete&filename=./en/" 
 	. $value 
@@ -86,7 +87,7 @@ foreach($_POST as $variable => $value)
 	. $value
 	. "</p>"
 	. "</div>"
-	. "<script> var msg = new SpeechSynthesisUtterance('$value'); window.speechSynthesis.speak(msg); </script>"
+	. "<script> var msg = new SpeechSynthesisUtterance('$value is not protected'); window.speechSynthesis.speak(msg); </script>"
 	. "</body>"
 	. "<html>");
 }	
