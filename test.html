@@ -1,16 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Open World Mobile Game</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/controls/OrbitControls.js"></script>
+    <title>Multi Edit Vandalism</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "./build/three.module.js",
+           "three/webgpu": "./build/three.webgpu.js",
+            "three/tsl": "./build/three.tsl.js",		   
+            "three/addons/": "./examples/jsm/"
+        }
+    }
+    </script>
+
+<!--<script type="importmap">
+    {
+        "imports": {
+			"three": "./build/three.module.js",
+            "three": "./build/three.webgpu.js",
+            "three/webgpu": "./build/three.webgpu.js",
+            "three/tsl": "./build/three.tsl.js",
+            "three/addons/": "./examples/jsm/"
+        }
+    }
+</script>-->
+	
+	
     <style>
-        body { margin: 0; overflow: hidden; }
-        canvas { display: block; }
+        body { margin: 0; overflow: hidden; touch-action: none; }
         
-        /* Joystick Styling */
+        /* Joystick */
         #joystick {
             position: fixed;
             bottom: 50px;
@@ -33,21 +54,32 @@
             transition: 0.1s;
         }
     </style>
+    
+
 </head>
 <body>
+		<div id="info">
+		</div>
 
 <!-- Joystick -->
 <div id="joystick">
     <div id="joystick-handle"></div>
 </div>
 
-<script>
+<script type="module">
+    import * as THREE from "three";
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { FirstPersonControls } from 'three/addons/controls/FirstPersonControls.js';
+
+
     // Scene setup
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 100);
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
+	
+	
 
     // Lighting
     const light = new THREE.DirectionalLight(0xffffff, 1);
@@ -61,25 +93,45 @@
     ground.rotation.x = -Math.PI / 2;
     scene.add(ground);
 
-    // Player (Character Cube for Now)
+    // Player (Simple Cube for Now)
     const playerGeometry = new THREE.BoxGeometry(1, 2, 1);
     const playerMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
     const player = new THREE.Mesh(playerGeometry, playerMaterial);
-    player.position.set(0, 1, 0);
-    scene.add(player);
+    player.position.set(0, 15, 0);
+    scene.add(player);	
+	
 
     // Camera Follow Setup
-    camera.position.set(0, 5, -10);
+    camera.position.set(0, 15, 0);
     camera.lookAt(player.position);
 
+
     function updateCamera() {
-        const offset = new THREE.Vector3(0, 3, -5);
-        const targetPosition = player.position.clone().add(offset);
-        camera.position.lerp(targetPosition, 0.1);
+		
+        const offset = new THREE.Vector3(0, 15, 0);
+        camera.position.lerp(player.position.clone().add(offset), 0.1);
         camera.lookAt(player.position);
     }
 
-    // Joystick Control
+    // 3D City (Basic Buildings)
+    function createBuilding(x, z, height) {
+        const building = new THREE.Mesh(
+            new THREE.BoxGeometry(5, height, 5),
+            new THREE.MeshStandardMaterial({ color: 0x808080 })
+        );
+        building.position.set(x, height / 2, z);
+        scene.add(building);
+    }
+
+    for (let i = -50; i <= 50; i += 15) {
+        for (let j = -50; j <= 50; j += 15) {
+            createBuilding(i, j, Math.random() * 10 + 5);
+        }
+    }
+	
+	
+
+// Touch Joystick Control
     let joystick = document.getElementById("joystick");
     let handle = document.getElementById("joystick-handle");
     let touchStartX = 0, touchStartY = 0;
@@ -93,9 +145,9 @@
 
     joystick.addEventListener("touchmove", (event) => {
         const touch = event.touches[0];
-        moveX = (touch.clientX - touchStartX) / 50;
-        moveZ = (touch.clientY - touchStartY) / 50;
-        
+        moveX = (touch.clientX - touchStartX) / -50;
+        moveZ = (touch.clientY - touchStartY) / -50;
+
         handle.style.transform = `translate(${moveX * 20}px, ${moveZ * 20}px)`;
     });
 
@@ -105,11 +157,15 @@
         handle.style.transform = "translate(0px, 0px)";
     });
 
+
     // Game Loop
     function animate() {
         requestAnimationFrame(animate);
-        player.position.x += moveX * 0.1;
-        player.position.z += moveZ * 0.1;
+
+        // Move player
+        player.position.x += moveX * 0.3;
+        player.position.z += moveZ * 0.3;
+
         updateCamera();
         renderer.render(scene, camera);
     }
@@ -118,3 +174,4 @@
 
 </body>
 </html>
+

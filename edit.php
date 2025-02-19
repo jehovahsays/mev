@@ -30,10 +30,10 @@ foreach($_POST as $variable => $value)
 	if (file_exists($file_pointer))  
 	{ 
 	echo "The file $file_pointer already exists <br>"; 
-	//echo "<meta name='viewport' content='width=device-width'>Click the link to visit the webpage you created for the keyword<br><br><a href='./en/$value.html'>$value</a><br><br>";
+	echo "<meta name='viewport' content='width=device-width'>Click the link to visit the webpage you created for the keyword<br><br><a href='./index.html#en/$value'>$value</a><br><br>";
 	echo "<script> var msg = new SpeechSynthesisUtterance('the keyword $value already exists'); window.speechSynthesis.speak(msg); </script>";
-	//echo "<body onload='loadout()'><script>function loadout(){window.location.href = './vandal.html'}</script>";	
-	echo "<body onload='loadout()'><script>function loadout(){window.location.href = './en/$value.html'}</script>";
+	//echo "<body onload='loadout()'><script>function loadout(){window.location.href = './index.html'}</script>";	
+	echo "<body onload='loadout()'><script>function loadout(){window.location.href = '../index.html#en/$value'}</script>";
 	exit();
 	}
 }
@@ -66,13 +66,7 @@ foreach($_POST as $variable => $value)
 	. "</title>"
 	. "</head>"
 	. "<body>"
-	. "<br><a href="
-	. "\""
-	. "../index.html"
-	. "\""
-	. "><center><button>Menu</button></center></a>"
-	. "<br><br>"
-	. "$value is not protected"
+	. "$value"
 	. "<br><br><a href="
 	. "\"" 
 	. "../delete.php?action=delete&filename=./en/" 
@@ -87,7 +81,7 @@ foreach($_POST as $variable => $value)
 	. $value
 	. "</p>"
 	. "</div>"
-	. "<script> var msg = new SpeechSynthesisUtterance('$value is not protected'); window.speechSynthesis.speak(msg); </script>"
+	. "<script> var msg = new SpeechSynthesisUtterance('$value'); window.speechSynthesis.speak(msg); </script>"
 	. "</body>"
 	. "<html>");
 }	
@@ -112,8 +106,120 @@ foreach($_POST as $variable => $value)
 	. "];var tc = TagCloud('.content', texts);console.log(tc);");
 }
 
- //echo "<meta name='viewport' content='width=device-width'>Click the link to visit the webpage you created for the keyword $value <br><br> <a href='./en/$value.html'>$value</a><br><br>";
- echo "<body onload='loadout()'><script>function loadout(){window.location.href = './en/$value.html'}</script>";
+
+foreach($_POST as $variable => $value) 
+{    
+    $value = str_replace(' ', '_', $value);	
+	$handle = fopen("./js/search.json", "a");
+	// load the data and delete the line from the array 
+	$lines = file('./js/search.json'); 
+	$last = sizeof($lines) - 1 ; 
+	unset($lines[$last]); 
+	// write the new data to the file 
+	file_put_contents('./js/search.json', $lines); 
+	$value = str_replace(' ', '_', $value);
+	fwrite($handle, 
+      ","	
+	. "\""
+	. $value
+	. "\""	
+	. ":"
+	. "\""
+	. "en/"
+	. $value
+    . "\""
+	. "\n"
+    . "}}}");
+}
+
+	foreach($_POST as $variable => $value) 
+{
+	$value = str_replace(' ', '_', $value);
+	$handle = fopen("./en/database.html", "a");
+	fwrite($handle, 
+	  "<a href=" 
+	. "\"" 
+	. "./"
+	. $value
+	. ".html" 
+	. "\"" 
+	. "class=" 
+	. "\"" 
+	. "titleInput" 
+	. "\"" 
+	. ">" 
+	. "<button>"
+	. $value
+    . "</button>"	
+	. "</a>"
+	. "\r\n");
+}
+
+foreach($_POST as $variable => $value) 
+{
+	$handle = fopen("./js/elizadata.js", "a");
+	// load the data and delete the line from the array 
+	$lines = file('./js/elizadata.js'); 
+	$last = sizeof($lines) - 1 ; 
+	unset($lines[$last]); 
+	// write the new data to the file 
+	file_put_contents('./js/elizadata.js', $lines); 
+	fwrite($handle, 
+	  ","
+	. "\""	  
+	. $value
+	. "\""	
+	. "\n"
+	. "];");
+}
+
+foreach($_POST as $variable => $value) 
+{
+$value = str_replace(' ', '_', $value);
+$handle = fopen("./en/$value.txt", "a");
+	fwrite($handle, 
+	   "$value"
+	 . "\r\n");
+}
+
+foreach($_POST as $variable => $value) 
+{
+	$handle = fopen("./en/articles.html", "a");
+	// load the data and delete the line from the array 
+	$lines = file('./en/articles.html'); 
+	$last = sizeof($lines) - 1 ; 
+	unset($lines[$last]); 
+	// write the new data to the file 
+	file_put_contents('./en/articles.html', $lines); 
+	$value = str_replace(' ', '_', $value);
+	fwrite($handle, 	
+	  "<li><a data-page=" 
+	. "\"" 
+	. $value  
+	. "\"" 
+	. "class=" 
+	. "\"" 
+	. "titleInput" 
+	. "\"" 
+	. ">" 
+	. $value
+	. "</a></li>"
+	. "\n"
+	. "</ul><script type="
+	. "\"" 
+	."text/javascript"
+	. "\"" 
+	."src="
+	. "\"" 
+	."../js/edit.js"
+	. "\"" 
+	. ">"
+	."></script>"
+	. "\r\n");
+}
+
+ echo "<meta name='viewport' content='width=device-width'>Click the link to visit the webpage you created for the keyword $value <br><br> <a href='./en/$value.html'>$value</a><br><br>";
+ echo "<body onload='loadout()'><script>function loadout(){window.location.href = '../index.html#en/$value'}</script>";
  //echo "<body onload='loadout()'><script>function loadout(){window.location.href = './officer.html'}</script>"; 
  echo "<script> var msg = new SpeechSynthesisUtterance('you created the keyword $value'); window.speechSynthesis.speak(msg); </script>";		
 fclose($handle);

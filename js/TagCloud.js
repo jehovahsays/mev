@@ -420,7 +420,7 @@
   TagCloud.list = [];
   // default config
   TagCloud._defaultConfig = {
-    radius: 75,
+    radius: 10,
     // rolling radius, unit `px`
     maxSpeed: 'normal',
     // rolling max speed, optional: `slow`, `normal`(default), `fast`

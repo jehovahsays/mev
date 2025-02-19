@@ -7,8 +7,8 @@
     <script type="importmap">
     {
         "imports": {
-            "three": "../build/three.module.js",
-            "three/addons/": "./jsm/"
+            "three": "./build/three.module.js",
+            "three/addons/": "./examples/jsm/"
         }
     }
     </script>
@@ -74,7 +74,7 @@
 
     // Scene Setup
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(155, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
@@ -95,7 +95,7 @@
     // Load 3D Character
     let player;
     const loader = new GLTFLoader();
-    loader.load("./models/gltf/RobotExpressive/RobotExpressive.glb", (gltf) => {
+    loader.load("./examples/models/gltf/RobotExpressive/RobotExpressive.glb", (gltf) => {
         player = gltf.scene;
         player.scale.set(1, 1, 1);
         scene.add(player);
@@ -209,8 +209,8 @@
 
     joystick.addEventListener("touchmove", (event) => {
         const touch = event.touches[0];
-        moveX = (touch.clientX - touchStartX) / 50;
-        moveZ = (touch.clientY - touchStartY) / 50;
+        moveX = (touch.clientX - touchStartX) / -50;
+        moveZ = (touch.clientY - touchStartY) / -50;
 
         handle.style.transform = `translate(${moveX * 20}px, ${moveZ * 20}px)`;
     });

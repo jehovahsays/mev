@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>spectator</title>
+    <title>Multi Edit Vandalism</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <script type="importmap">
     {
         "imports": {
-            "three": "https://cdn.jsdelivr.net/npm/three@0.138.3/build/three.module.js",
-            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.138.3/examples/jsm/"
+            "three": "./build/three.module.js",
+            "three/addons/": "./examples/jsm/"
         }
     }
     </script>
@@ -58,10 +58,10 @@
 }
 .button {
         margin: 0px;
-		width: 55px;
+		width: 75px;
 		height: 25px;
 	    position: fixed;		
-	    top: 10px;
+	    top: 50px;
         left: 165px;
 		right: 0px;
         padding: 0px;
@@ -69,15 +69,16 @@
 }
 .earth {
         margin: 0px;
-		width: 55px;
-		height: 55px;
+		width: 35px;
+		height: 35px;
 	    position: fixed;		
-	    top: 150px;
-        left: 165px;
+	    top: 155px;
+        left: 175px;
 		right: 0px;
         padding: 0px;
 		opacity: 1.5;
 }
+
 input[type="text"] {
   font-family: monospace;
   font-size: 10px;
@@ -137,7 +138,7 @@ type="text/javascript"
 src="./js/TagCloud.js">
 </script>-->
 
-<script type="importmap">
+<!--<script type="importmap">
     {
         "imports": {
 			"three": "./build/three.module.js",
@@ -147,7 +148,7 @@ src="./js/TagCloud.js">
             "three/addons/": "./examples/jsm/"
         }
     }
-</script>
+</script>-->
 
 
 </head>
@@ -157,12 +158,12 @@ src="./js/TagCloud.js">
 <form
 class="earth"
 id="secure-form-answer"
-action="./spectated.php" 
+action="./edit.php" 
 method="post">	
 <div id="inputWrapper">
 <input
 class="earth"
-style="position:center;top:50px;left:90px;width:200px;"
+style="position:center;top:0px;left:0px;width:100%;"
 id="filterInput"
 onkeyup="titleInput()"
 autocomplete="true"
@@ -174,7 +175,7 @@ name="secure-form-answer-Human"
 maxlength="524288" 
 value=""
 aria-label="search"  
-placeholder="Add Keyword to spectate" 
+placeholder="Add Keyword to database" 
 x-webkit-speech
 required>
 </div>	
@@ -237,36 +238,15 @@ color: blue;">
 <!-- <script> var msg = new SpeechSynthesisUtterance('connected'); window.speechSynthesis.speak(msg); </script> -->
 <!-- content -->
 <!--<img src="../img/core.webp" class="core" style="background: transparent;">-->
-<a href="./map.html">
-<img src="./img/aim2.png" class="earth" style="top: 150px;left: 160px;background: transparent;">
+<a href="./browser.html"><button class="button">options</button>
+<!--<img src="./img/aim2.png" class="earth" style="top: 150px;left: 160px;background: transparent;">-->
 </a>
-<a href="./index.html">
-<button class="button">Menu</button>
-</a>
-<iframe 
-    class="content"
-    style="position: absolute;
-padding: 0px;
-margin: 0px;
-top: 234px;
-left: 110px;	
-width: 0vh; 
-height: 0vh; 
-border: none"
 
-        src="https://www.youtube.com/embed?listType=playlist&list=PLwMe8hyy9osL3w1OzyJQkIEVvZ4rrQ-E6&si=DcvcUm63Ay4vLnDL&autoplay=1&loop=1"
-    title="playlist" 
-	frameborder="0" 
-	allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-	allowfullscreen
-></iframe>
  <!--<script 
 type="text/javascript" 
 src="./js/tagcloudlog.js">
 </script>-->
 </div>
-
-
 
 		</div>
 
@@ -277,6 +257,7 @@ src="./js/tagcloudlog.js">
 
 <script type="module">
     import * as THREE from "three";
+    import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
     // Scene setup
     const scene = new THREE.Scene();
@@ -304,12 +285,23 @@ src="./js/tagcloudlog.js">
     player.position.set(0, 1, 0);
     scene.add(player);
 
+    // Load 3D Character
+    //let player;
+    //const loader = new GLTFLoader();
+    //loader.load("./examples/models/gltf/RobotExpressive/RobotExpressive.glb", (gltf) => {
+        //player = gltf.scene;
+        //player.position.set(0, 1, 0);
+        //scene.add(player);
+    //});
+	
+	
+
     // Camera Follow Setup
-    camera.position.set(0, 5, -10);
+    camera.position.set(10, 5, -25);
     camera.lookAt(player.position);
 
     function updateCamera() {
-        const offset = new THREE.Vector3(0, 3, -5);
+        const offset = new THREE.Vector3(10, 15, -25);
         camera.position.lerp(player.position.clone().add(offset), 0.1);
         camera.lookAt(player.position);
     }
@@ -329,8 +321,10 @@ src="./js/tagcloudlog.js">
             createBuilding(i, j, Math.random() * 10 + 5);
         }
     }
+	
+	
 
-    // Joystick Control
+// Touch Joystick Control
     let joystick = document.getElementById("joystick");
     let handle = document.getElementById("joystick-handle");
     let touchStartX = 0, touchStartY = 0;
@@ -344,8 +338,8 @@ src="./js/tagcloudlog.js">
 
     joystick.addEventListener("touchmove", (event) => {
         const touch = event.touches[0];
-        moveX = (touch.clientX - touchStartX) / 50;
-        moveZ = (touch.clientY - touchStartY) / 50;
+        moveX = (touch.clientX - touchStartX) / -50;
+        moveZ = (touch.clientY - touchStartY) / -50;
 
         handle.style.transform = `translate(${moveX * 20}px, ${moveZ * 20}px)`;
     });
@@ -356,13 +350,14 @@ src="./js/tagcloudlog.js">
         handle.style.transform = "translate(0px, 0px)";
     });
 
+
     // Game Loop
     function animate() {
         requestAnimationFrame(animate);
 
         // Move player
-        player.position.x += moveX * 0.1;
-        player.position.z += moveZ * 0.1;
+        player.position.x += moveX * 0.3;
+        player.position.z += moveZ * 0.3;
 
         updateCamera();
         renderer.render(scene, camera);
@@ -372,3 +367,4 @@ src="./js/tagcloudlog.js">
 
 </body>
 </html>
+

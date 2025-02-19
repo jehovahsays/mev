@@ -30,8 +30,8 @@ if ($answer1 == "Human") { $totalCorrect++; }
 echo "<div id='results'>$totalCorrect /  1 correct</div>";
 
  //echo "<meta name='viewport' content='width=device-width'>successfully created <br> <a href='./en/$value.html'>$value</a>";
- echo "<body onload='loadout()'><script>function loadout(){window.location.href = './index.html'}</script>";
- echo "<script> var msg = new SpeechSynthesisUtterance('you deleted the unprotected keyword'); window.speechSynthesis.speak(msg); </script>";		
+ echo "<body onload='loadout()'><script>function loadout(){window.location.href = './index.html#en/index'}</script>";
+ echo "<script> var msg = new SpeechSynthesisUtterance('you deleted the keyword'); window.speechSynthesis.speak(msg); </script>";		
 fclose($handle);
 exit();
 
