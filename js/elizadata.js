@@ -618,4 +618,5 @@ var elizaInitials = [
 ,"elizabot"
 ,"tv"
 ,"radio"
+,"test"
 ];

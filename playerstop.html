@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Open World Mobile Game</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/controls/OrbitControls.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+        
+        /* Joystick Styling */
+        #joystick {
+            position: fixed;
+            bottom: 50px;
+            left: 50px;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            touch-action: none;
+        }
+
+        #joystick-handle {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 255, 0.8);
+            border-radius: 50%;
+            left: 30px;
+            top: 30px;
+            transition: 0.1s;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Joystick -->
+<div id="joystick">
+    <div id="joystick-handle"></div>
+</div>
+
+<script>
+    // Scene setup
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Lighting
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(10, 20, 10);
+    scene.add(light);
+
+    // Ground
+    const groundGeometry = new THREE.PlaneGeometry(200, 200);
+    const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x228B22 });
+    const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+    ground.rotation.x = -Math.PI / 2;
+    scene.add(ground);
+
+    // Player (Character Cube for Now)
+    const playerGeometry = new THREE.BoxGeometry(1, 2, 1);
+    const playerMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+    const player = new THREE.Mesh(playerGeometry, playerMaterial);
+    player.position.set(0, 1, 0);
+    scene.add(player);
+
+    // Camera Follow Setup
+    camera.position.set(0, 5, -10);
+    camera.lookAt(player.position);
+
+    function updateCamera() {
+        const offset = new THREE.Vector3(0, 3, -5);
+        const targetPosition = player.position.clone().add(offset);
+        camera.position.lerp(targetPosition, 0.1);
+        camera.lookAt(player.position);
+    }
+
+    // Joystick Control
+    let joystick = document.getElementById("joystick");
+    let handle = document.getElementById("joystick-handle");
+    let touchStartX = 0, touchStartY = 0;
+    let moveX = 0, moveZ = 0;
+
+    joystick.addEventListener("touchstart", (event) => {
+        const touch = event.touches[0];
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+    });
+
+    joystick.addEventListener("touchmove", (event) => {
+        const touch = event.touches[0];
+        moveX = (touch.clientX - touchStartX) / 50;
+        moveZ = (touch.clientY - touchStartY) / 50;
+        
+        handle.style.transform = `translate(${moveX * 20}px, ${moveZ * 20}px)`;
+    });
+
+    joystick.addEventListener("touchend", () => {
+        moveX = 0;
+        moveZ = 0;
+        handle.style.transform = "translate(0px, 0px)";
+    });
+
+    // Game Loop
+    function animate() {
+        requestAnimationFrame(animate);
+        player.position.x += moveX * 0.1;
+        player.position.z += moveZ * 0.1;
+        updateCamera();
+        renderer.render(scene, camera);
+    }
+    animate();
+</script>
+
+</body>
+</html>

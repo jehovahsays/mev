@@ -6,4 +6,5 @@ var texts = [
 "elizabot",
 "tv",
 "radio",
+"test",
 ];var tc = TagCloud('.content', texts);console.log(tc);
