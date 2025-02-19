@@ -129,11 +129,11 @@ src="./js/TagCloud.js">
 <script type="importmap">
     {
         "imports": {
-			"three": "../build/three.module.js",
-            "three": "../build/three.webgpu.js",
-            "three/webgpu": "../build/three.webgpu.js",
-            "three/tsl": "../build/three.tsl.js",
-            "three/addons/": "../examples/jsm/"
+			"three": "./build/three.module.js",
+            "three": "./build/three.webgpu.js",
+            "three/webgpu": "./build/three.webgpu.js",
+            "three/tsl": "./build/three.tsl.js",
+            "three/addons/": "./examples/jsm/"
         }
     }
 </script>
@@ -150,7 +150,7 @@ src="./js/TagCloud.js">
 <form
 class="earth"
 id="secure-form-answer"
-action="../edit.php" 
+action="./edit.php" 
 method="post">	
 <div id="inputWrapper">
 <input
@@ -378,7 +378,7 @@ src="./js/tagcloudlog.js">
     }
 
     function updateBuildings() {
-        fetch("../map.php")
+        fetch("./map.php")
             .then(response => response.json())
             .then(files => {
                 let existingFiles = Object.keys(buildings);
