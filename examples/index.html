@@ -129,11 +129,11 @@ src="./js/TagCloud.js">
 <script type="importmap">
     {
         "imports": {
-			"three": "../build/three.module.js",
-            "three": "../build/three.webgpu.js",
-            "three/webgpu": "../build/three.webgpu.js",
-            "three/tsl": "../build/three.tsl.js",
-            "three/addons/": "../examples/jsm/"
+			"three": "./build/three.module.js",
+            "three": "./build/three.webgpu.js",
+            "three/webgpu": "./build/three.webgpu.js",
+            "three/tsl": "./build/three.tsl.js",
+            "three/addons/": "./examples/jsm/"
         }
     }
 </script>
@@ -150,7 +150,7 @@ src="./js/TagCloud.js">
 <form
 class="earth"
 id="secure-form-answer"
-action="../edit.php" 
+action="./edit.php" 
 method="post">	
 <div id="inputWrapper">
 <input
@@ -179,6 +179,7 @@ Human
 </label>
 </noscript>
 </form>
+
 <!-- 
 <a href="./index.html" 
 target="_blank" rel="noopener">
@@ -223,23 +224,17 @@ style="
 position: absolute;
 width: 3px;
 height: 3px;
-top: 250px;
-left: 200px;
-background-color: red;	
-font-size: 10px;
-color: white;">
+top: 230px;
+left: 190px;
+font-size: 15px;
+color: blue;">
 <br>
-<a href="../browser.html#/database"><button class="button">search</button>
-</a>
-<br>
-
 <!--<script 
 type="text/javascript" 
 src="./js/tagcloudlog.js">
 </script>-->
 
 </div>
-
 		</div>
 		
 
@@ -255,6 +250,7 @@ src="./js/tagcloudlog.js">
     let scene, camera, renderer, controls;
     let buildings = {}; // Store buildings by filename
 
+	
 	
     function init() {
         camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 600);
@@ -350,7 +346,7 @@ src="./js/tagcloudlog.js">
         controls = new OrbitControls(camera, renderer.domElement);
         controls.target.set(0, 1, 0);
         controls.minDistance = 0;
-        controls.maxDistance = 500;
+        controls.maxDistance = 100;
         controls.maxPolarAngle = Math.PI / 2;
         controls.autoRotate = false;
         controls.autoRotateSpeed = .1;
@@ -383,7 +379,7 @@ src="./js/tagcloudlog.js">
     }
 
     function updateBuildings() {
-        fetch("../map.php")
+        fetch("./map.php")
             .then(response => response.json())
             .then(files => {
                 let existingFiles = Object.keys(buildings);
@@ -421,7 +417,26 @@ src="./js/tagcloudlog.js">
     animate();
 </script>
 
-<div class="footer">
+<div class="footer"
+style=" 
+position: fixed;
+background-color: black;	
+font-size: 10px;
+color: white;">
+<a href="./player.html">
+<button>
+click here to enter
+</button>
+</a>
+<p>
+use one thumb to look up, down, left, and right<br>
+use two thumbs to zoom in and zoom out<br>
+use two thumbs to pull or push entire map<br>
+up,down,left,right,forward,and backward<br>
+real time 3d data visualization tool<br>
+mobile browser based game<br>
+massive multiplayer open wolrd mobile game<br>
+<p>
 webmaster: morgan shatee byers
 </div>
 

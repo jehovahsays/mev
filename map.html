@@ -1,24 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>officer</title>
+    <title>Multi Edit Vandalism</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    
-<style>
+
+
+	<style>
+body { 
+		margin: 0; 
+		overflow: hidden; 
 .favicon{
    position: fixed;
    top:0;
    left: 0;
 }
-</style>
-	
-	<style>
-       body { 
-		margin: 0; 
-		overflow: hidden; 
 		}
-    
+.footer {
+   position: fixed;
+   left: 0;
+   bottom: 0;
+   width: 100%;
+   color: black;
+   text-align: center;
+}		
+.video {
+        margin: 0px;
+		width: 100vw;
+		height: 10vh;
+	    position: absolute;		
+	    top: 0px;
+        left: 0px;
+        padding: 0px;
+		opacity: 1.5;
+}    
 .core {
         margin: 0px;
 		width: 100%;
@@ -32,11 +47,11 @@
 }
 .earth {
         margin: 0px;
-		width: 55px;
-		height: 55px;
+		width: 35px;
+		height: 35px;
 	    position: fixed;		
-	    top: 150px;
-        left: 165px;
+	    top: 155px;
+        left: 175px;
 		right: 0px;
         padding: 0px;
 		opacity: 1.5;
@@ -46,12 +61,13 @@
 		width: 55px;
 		height: 25px;
 	    position: fixed;		
-	    top: 10px;
+	    top: 50px;
         left: 165px;
 		right: 0px;
         padding: 0px;
 		opacity: 1.5;
 }
+
 
 input[type="text"] {
   font-family: monospace;
@@ -107,38 +123,36 @@ filterInput {
 }  
 </style>
 
-<!--<script 
-type="text/javascript" 
-src="./js/TagCloud.js">
-</script>-->
-
 <script type="importmap">
     {
         "imports": {
-			"three": "./build/three.module.js",
-            "three": "./build/three.webgpu.js",
-            "three/webgpu": "./build/three.webgpu.js",
-            "three/tsl": "./build/three.tsl.js",
-            "three/addons/": "./examples/jsm/"
+			"three": "../build/three.module.js",
+            "three": "../build/three.webgpu.js",
+            "three/webgpu": "../build/three.webgpu.js",
+            "three/tsl": "../build/three.tsl.js",
+            "three/addons/": "../examples/jsm/"
         }
     }
 </script>
 
 
+
 </head>
 <body>
+
+
 		<div id="info">
-		<div id="inputWrapper">
+				<div id="inputWrapper">
 		
-<form
+<!--<form
 class="earth"
 id="secure-form-answer"
-action="./officer.php" 
+action="./edit.php" 
 method="post">	
 <div id="inputWrapper">
 <input
 class="earth"
-style="position:center;top:50px;left:90px;width:200px;"
+style="position:center;top:0px;left:0px;width:100%;"
 id="filterInput"
 onkeyup="titleInput()"
 autocomplete="true"
@@ -150,7 +164,7 @@ name="secure-form-answer-Human"
 maxlength="524288" 
 value=""
 aria-label="search"  
-placeholder="Add Keyword to protect" 
+placeholder="Add Keyword to database" 
 x-webkit-speech
 required>
 </div>	
@@ -161,12 +175,7 @@ for="secure-form-answer-Human">
 Human
 </label>
 </noscript>
-</form>
-<!-- 
-<a href="./index.html" 
-target="_blank" rel="noopener">
-Go to city</a> Multi Edit Vandalism
-<br>-->
+</form>-->
 
 <script>
 function titleInput() {
@@ -204,54 +213,29 @@ onkeyup="titleInput()"
 class="content"
 style=" 
 position: absolute;
-padding: 0px;
-margin: 0px;
-top: 30px;
-left: 75px;			
-font-size: 15px;
-color: blue;">
-<!-- <script> var msg = new SpeechSynthesisUtterance('connected'); window.speechSynthesis.speak(msg); </script> -->
-<!-- content -->
-<!--<img src="../img/core.webp" class="core" style="background: transparent;">-->
-<a href="./player2.html">
-<img src="./img/aim2.png" class="earth" style="top: 150px;left: 160px;background: transparent;">
-</a>
-<a href="./index.html">
-<img src="./img/favicon.ico" class="favicon">
+width: 3px;
+height: 3px;
+top: 250px;
+left: 200px;
+background-color: red;	
+font-size: 10px;
+color: white;">
+<br>
+
+<a href="./index.html" class="favicon">
+<img src="./img/favicon.ico">
 </a>
 <br>
-</a>
-<!--<iframe 
-    class="content"
-    style="position: absolute;
-padding: 0px;
-margin: 0px;
-top: 234px;
-left: 110px;	
-width: 0vh; 
-height: 0vh; 
-border: none"
-
-src="https://www.youtube.com/embed?listType=playlist&list=PLwMe8hyy9osIsMqTrT_7S6NQ9NJVLCBZV&si=pBQXH_WEknERpnx3&autoplay=1&loop=1"
-
-    title="playlist" 
-	frameborder="0" 
-	allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-	allowfullscreen
-></iframe>-->
- <!--<script 
-type="text/javascript" 
-src="./js/tagcloudlog.js">
-</script>-->
 
 
 </div>
-
 		</div>
-
+		
 <script type="module">
 
     import * as THREE from 'three';
+    import { FirstPersonControls } from 'three/addons/controls/FirstPersonControls.js';	
+	
     import { color, fog, float, positionWorld, triNoise3D, positionView, normalWorld, uniform } from 'three/tsl';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
@@ -259,18 +243,17 @@ src="./js/tagcloudlog.js">
     let buildings = {}; // Store buildings by filename
 
 	
-	
     function init() {
-        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 600);
-        camera.position.set(30, 15, 50);
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 600);
+        camera.position.set(1.10, 1000);
 
-        scene = new THREE.Scene();
-
+        scene = new THREE.Scene();		
+    	
         // Custom fog
         const skyColor = color(0xf0f5f5);
         const groundColor = color(0xd0dee7);
         const fogNoiseDistance = positionView.z.negate().smoothstep(0, camera.far - 300);
-        const distance = fogNoiseDistance.mul(20).max(4);
+        const distance = fogNoiseDistance.mul(0).max(4);
         const alpha = .98;
         const groundFogArea = float(distance).sub(positionWorld.y).div(distance).pow(3).saturate().mul(alpha);
 
@@ -317,24 +300,34 @@ src="./js/tagcloudlog.js">
 
 				}
 	
-		
-		
+				
         // Lights
-        scene.add(new THREE.HemisphereLight(skyColor.value, groundColor.value, 0.5));
+        //scene.add(new THREE.HemisphereLight(skyColor.value, groundColor.value, 0.5));
 
+    // Lighting
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(10, 20, 10);
+    scene.add(light);		
+		
         // Ground
         const planeGeometry = new THREE.PlaneGeometry(200, 200);
         const planeMaterial = new THREE.MeshPhongMaterial({ color: 0x999999 });
         const ground = new THREE.Mesh(planeGeometry, planeMaterial);
         ground.rotation.x = -Math.PI / 2;
         ground.scale.multiplyScalar(3);
-        ground.castShadow = true;
-        ground.receiveShadow = true;
+        ground.castShadow = false;
+        ground.receiveShadow = false;
         scene.add(ground);
 		
-
+	    // Ground
+    //const groundGeometry = new THREE.PlaneGeometry(200, 200);
+    //const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x228B22 });
+    //const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+    //ground.rotation.x = -Math.PI / 2;
+    //scene.add(ground);	
+           				
         // Renderer
-        renderer = new THREE.WebGPURenderer({ antialias: true });
+        renderer = new THREE.WebGPURenderer({ antialias: false });
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setAnimationLoop(animate);
@@ -342,9 +335,9 @@ src="./js/tagcloudlog.js">
 
         // Controls
         controls = new OrbitControls(camera, renderer.domElement);
-        controls.target.set(0, 2, 0);
-        controls.minDistance = 7;
-        controls.maxDistance = 200;
+        controls.target.set(0, 1, 0);
+        controls.minDistance = 0;
+        controls.maxDistance = 500;
         controls.maxPolarAngle = Math.PI / 2;
         controls.autoRotate = false;
         controls.autoRotateSpeed = .1;
@@ -353,7 +346,7 @@ src="./js/tagcloudlog.js">
         window.addEventListener('resize', resize);
 
         updateBuildings(); // Initial check
-        setInterval(updateBuildings, 2000); // Poll every 2 seconds
+        setInterval(updateBuildings, 30000); // Poll every 2 seconds
     }
 
     function resize() {
@@ -404,14 +397,36 @@ src="./js/tagcloudlog.js">
 
     function animate() {
         requestAnimationFrame(animate);
-        controls.update();
+        
         renderer.render(scene, camera);
+        
+        updateCamera();
+        
     }
+	
     window.onload = init;
-	
-	
-
+    animate();
 </script>
+
+<!--
+<div class="footer"
+style=" 
+position: fixed;
+background-color: black;	
+font-size: 10px;
+color: white;">
+<p>
+use one thumb to look up, down, left, and right<br>
+use two thumbs to zoom in and zoom out<br>
+use two thumbs to pull or push entire map<br>
+up,down,left,right,forward,and backward<br>
+real time 3d data visualization tool<br>
+mobile browser based game<br>
+massive multiplayer open wolrd mobile game<br>
+<p>
+webmaster: morgan shatee byers
+</div>-->
+
 
 </body>
 </html>
