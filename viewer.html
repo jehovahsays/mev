@@ -1,21 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Multi Edit Vandalism</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<meta charset="charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge;chrome=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=1.0" />
+<meta http-equiv="Cache-Control" content="private, no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<meta http-equiv="Clear-Site-Data" content="*">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta http-epuiv="X-XSS-Protection" content="1; mode=block">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="Content-Security-Policy" content="
+default-src 'self' http: https:;
+script-src 'self' 'unsafe-inline' 'unsafe-eval' http: https:;
+style-src 'self' 'unsafe-inline' http: https:;
+img-src data: http: https:;
+font-src 'self' http: https:;
+connect-src http: https:;
+frame-src 'self' http: https:;"/>
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="cyan" />
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="black" />
+<link rel="icon" type="image/png" href="./favicon.ico">
+<link rel="shortcut icon" href="./favicon.ico" media="(prefers-color-scheme: dark)"/>
+<link rel="shortcut icon" href="./favicon.ico" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="cyan" />
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="black" />
+<title>viewer</title>
+<style>
+/* mobile */
 
-
-	<style>
-body { 
-		margin: 0; 
-		overflow: hidden; 
-.favicon{
-   position: fixed;
-   top:0;
-   left: 0;
-}
-		}
+body {
+	margin: 0; 
+	overflow: hidden;
+}		
 .footer {
    position: fixed;
    left: 0;
@@ -23,63 +42,21 @@ body {
    width: 100%;
    color: black;
    text-align: center;
-}		
-.video {
-        margin: 0px;
-		width: 100vw;
-		height: 10vh;
-	    position: absolute;		
-	    top: 0px;
-        left: 0px;
-        padding: 0px;
-		opacity: 1.5;
-}    
-.core {
+}	
+.search {
         margin: 0px;
 		width: 100%;
-		height: 300px;
+		height: 50px;
 	    position: fixed;		
-	    top: 55px;
-        left: 0px;
-		right: 0px;
-        padding: 0px;
-		opacity: 0.5;
-}
-.earth {
-        margin: 0px;
-		width: 35px;
-		height: 35px;
-	    position: fixed;		
-	    top: 155px;
-        left: 175px;
-		right: 0px;
+	    top: 15px;
+        left: 50px;
         padding: 0px;
 		opacity: 1.5;
 }
-.button {
-        margin: 0px;
-		width: 55px;
-		height: 25px;
-	    position: fixed;		
-	    top: 50px;
-        left: 165px;
-		right: 0px;
-        padding: 0px;
-		opacity: 1.5;
-}
-
-
 input[type="text"] {
   font-family: monospace;
   font-size: 10px;
   color: peru;
-}
-fieldset{
-	position:absolute
-	top:0;
-	left:0;
-	width:99%;
-	height:99%;
 }
 filterInput {
         list-style: none;
@@ -93,8 +70,8 @@ filterInput {
 .titleInput {
         margin: 0px;
 	    position: absolute;		
-	    top: 20px;
-        left: 250px;
+	    top: 50px;
+        left: 10px;
         font-size: 1.0em;
         padding: 0px;
         animation: fadeIn 0.5s ease-in-out;
@@ -103,8 +80,8 @@ filterInput {
 .titleInput:last-child {        
         margin: 0px;
 	    position: absolute;		
-	    top: 20px;
-        left: 250px;
+	    top: 50px;
+        left: 10px;
         font-size: 1.0em;
         padding: 0px;
         border-bottom: none;
@@ -123,119 +100,25 @@ filterInput {
 }  
 </style>
 
+</head>
+
+<body style="background-color:black;">
+
 <script type="importmap">
     {
         "imports": {
-			"three": "../build/three.module.js",
-            "three": "../build/three.webgpu.js",
-            "three/webgpu": "../build/three.webgpu.js",
-            "three/tsl": "../build/three.tsl.js",
-            "three/addons/": "../examples/jsm/"
+			"three": "./build/three.module.js",
+            "three": "./build/three.webgpu.js",
+            "three/webgpu": "./build/three.webgpu.js",
+            "three/tsl": "./build/three.tsl.js",
+            "three/addons/": "./examples/jsm/"
         }
     }
 </script>
 
-
-
-</head>
-<body>
-
-
-		<div id="info">
-				<div id="inputWrapper">
-		
-<!--<form
-class="earth"
-id="secure-form-answer"
-action="./edit.php" 
-method="post">	
-<div id="inputWrapper">
-<input
-class="earth"
-style="position:center;top:0px;left:0px;width:100%;"
-id="filterInput"
-onkeyup="titleInput()"
-autocomplete="true"
-autocorrect="off"  
-autocapitalize="off" 
-spellcheck="true"
-type="text" 
-name="secure-form-answer-Human"
-maxlength="524288" 
-value=""
-aria-label="search"  
-placeholder="Add Keyword to database" 
-x-webkit-speech
-required>
-</div>	
-
-<noscript>
-<label 
-for="secure-form-answer-Human">
-Human
-</label>
-</noscript>
-</form>-->
-
-<script>
-function titleInput() {
-	
-  let input = document.getElementById('filterInput').value;
-
-  input = input.toLowerCase();
-
-  let x = document.getElementsByClassName('titleInput');
- 
-  for (i = 0; i < x.length; i++) {
-
-    if (!x[i].innerHTML.toLowerCase().includes(input)) {
-
-      x[i].style.display = "none";
-
-    }
-
-    else {
-
-      x[i].style.display = "list-item";
-
-    }
-
-  }
-
-var msg = new SpeechSynthesisUtterance(input); window.speechSynthesis.speak(msg);   
-  
-}
-</script>
-
-<div 
-id="filterInput"
-onkeyup="titleInput()" 
-class="content"
-style=" 
-position: absolute;
-width: 3px;
-height: 3px;
-top: 250px;
-left: 200px;
-background-color: red;	
-font-size: 10px;
-color: white;">
-<br>
-
-<a href="./index.html" class="favicon">
-<img src="./img/favicon.ico">
-</a>
-<br>
-
-
-</div>
-		</div>
-		
 <script type="module">
 
     import * as THREE from 'three';
-    import { FirstPersonControls } from 'three/addons/controls/FirstPersonControls.js';	
-	
     import { color, fog, float, positionWorld, triNoise3D, positionView, normalWorld, uniform } from 'three/tsl';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
@@ -243,17 +126,18 @@ color: white;">
     let buildings = {}; // Store buildings by filename
 
 	
+	
     function init() {
-        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 600);
-        camera.position.set(1.10, 1000);
+        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 600);
+        camera.position.set(30, 15, 50);
 
-        scene = new THREE.Scene();		
-    	
+        scene = new THREE.Scene();
+
         // Custom fog
         const skyColor = color(0xf0f5f5);
         const groundColor = color(0xd0dee7);
         const fogNoiseDistance = positionView.z.negate().smoothstep(0, camera.far - 300);
-        const distance = fogNoiseDistance.mul(0).max(4);
+        const distance = fogNoiseDistance.mul(20).max(4);
         const alpha = .98;
         const groundFogArea = float(distance).sub(positionWorld.y).div(distance).pow(3).saturate().mul(alpha);
 
@@ -300,34 +184,24 @@ color: white;">
 
 				}
 	
-				
-        // Lights
-        //scene.add(new THREE.HemisphereLight(skyColor.value, groundColor.value, 0.5));
-
-    // Lighting
-    const light = new THREE.DirectionalLight(0xffffff, 1);
-    light.position.set(10, 20, 10);
-    scene.add(light);		
 		
+		
+        // Lights
+        scene.add(new THREE.HemisphereLight(skyColor.value, groundColor.value, 0.5));
+
         // Ground
         const planeGeometry = new THREE.PlaneGeometry(200, 200);
         const planeMaterial = new THREE.MeshPhongMaterial({ color: 0x999999 });
         const ground = new THREE.Mesh(planeGeometry, planeMaterial);
         ground.rotation.x = -Math.PI / 2;
         ground.scale.multiplyScalar(3);
-        ground.castShadow = false;
-        ground.receiveShadow = false;
+        ground.castShadow = true;
+        ground.receiveShadow = true;
         scene.add(ground);
 		
-	    // Ground
-    //const groundGeometry = new THREE.PlaneGeometry(200, 200);
-    //const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x228B22 });
-    //const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-    //ground.rotation.x = -Math.PI / 2;
-    //scene.add(ground);	
-           				
+
         // Renderer
-        renderer = new THREE.WebGPURenderer({ antialias: false });
+        renderer = new THREE.WebGPURenderer({ antialias: true });
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setAnimationLoop(animate);
@@ -335,9 +209,9 @@ color: white;">
 
         // Controls
         controls = new OrbitControls(camera, renderer.domElement);
-        controls.target.set(0, 1, 0);
-        controls.minDistance = 0;
-        controls.maxDistance = 500;
+        controls.target.set(0, 2, 0);
+        controls.minDistance = 7;
+        controls.maxDistance = 200;
         controls.maxPolarAngle = Math.PI / 2;
         controls.autoRotate = false;
         controls.autoRotateSpeed = .1;
@@ -346,7 +220,7 @@ color: white;">
         window.addEventListener('resize', resize);
 
         updateBuildings(); // Initial check
-        setInterval(updateBuildings, 30000); // Poll every 2 seconds
+        setInterval(updateBuildings, 2000); // Poll every 2 seconds
     }
 
     function resize() {
@@ -397,36 +271,88 @@ color: white;">
 
     function animate() {
         requestAnimationFrame(animate);
-        
+        controls.update();
         renderer.render(scene, camera);
-        
-        updateCamera();
-        
     }
-	
     window.onload = init;
-    animate();
+	
+	
+
 </script>
 
-<!--
-<div class="footer"
+<script>
+function titleInput() {
+	
+  let input = document.getElementById('filterInput').value;
+
+  input = input.toLowerCase();
+
+  let x = document.getElementsByClassName('titleInput');
+ 
+  for (i = 0; i < x.length; i++) {
+
+    if (!x[i].innerHTML.toLowerCase().includes(input)) {
+
+      x[i].style.display = "none";
+
+    }
+
+    else {
+
+      x[i].style.display = "list-item";
+
+    }
+
+  }
+
+var msg = new SpeechSynthesisUtterance(input); window.speechSynthesis.speak(msg);   
+  
+}
+</script>
+
+
+<div 
+class="footer"
 style=" 
 position: fixed;
-background-color: black;	
+background-color: none;	
 font-size: 10px;
 color: white;">
-<p>
-use one thumb to look up, down, left, and right<br>
-use two thumbs to zoom in and zoom out<br>
-use two thumbs to pull or push entire map<br>
-up,down,left,right,forward,and backward<br>
-real time 3d data visualization tool<br>
-mobile browser based game<br>
-massive multiplayer open wolrd mobile game<br>
-<p>
-webmaster: morgan shatee byers
-</div>-->
 
+<form
+class="search"
+id="secure-form-answer"
+action="./viewer.php" 
+method="post">	
+<div id="inputWrapper">
+<input
+class="search"
+style="position:fixed;top:50px;left:8px;height:30px;width:95%;"
+id="filterInput"
+onkeyup="titleInput()"
+autocomplete="true"
+autocorrect="off"  
+autocapitalize="off" 
+spellcheck="true"
+type="text" 
+name="secure-form-answer-Human"
+maxlength="524288" 
+value=""
+aria-label="search"  
+placeholder="Add Keyword to database" 
+x-webkit-speech
+required>
+</div>	
+
+<noscript>
+<label 
+for="secure-form-answer-Human">
+Human
+</label>
+</noscript>
+</form>
+
+</div>
 
 </body>
 </html>

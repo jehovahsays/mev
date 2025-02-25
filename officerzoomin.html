@@ -1,17 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>vandal</title>
+    <title>officer</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 <style>
-.favicon{
-   position: fixed;
-   top:0;
-   left: 0;
+/* Dropdown container DIV */
+.dropdown {
+    position: relative;
+    display: inline-block;
+	top:1px;
+	left:1px;
 }
-</style>
-    
+
+/* Dropdown button */
+.dropbtn {
+    display: inline-block;
+    font-weight: 400;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: 1px solid transparent;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .25rem;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    user-select: none;
+    outline: 0;
+    transition: .15s ease-in-out;
+}
+
+.dropbtn:hover {
+    background-color: #0069d9;
+}
+
+/* Dropdown menu (Hidden by Default) */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 160px;
+    padding: 8px 0;
+    background: white;
+    box-shadow: 0 1px 8px 2px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+/* Links inside the dropdown menu */
+.dropdown-menu a {
+    color: #000;
+    padding: 10px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Change bg-color of dropdown links on hover */
+.dropdown-menu a:hover {
+    background-color: #f1f1f1;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+/* Caret */
+.caret {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    vertical-align: middle;
+    border-top: 6px dashed;
+    border-right: 6px solid transparent;
+    border-left: 6px solid transparent;
+}
+
+/* Dropdown menu Header */
+.dropdown-menu .dropdown-header {
+    color: #777;
+    font-size: .8rem;
+    padding: 8px 16px;
+}
+</style>    
 	<script type="importmap">
     {
         "imports": {
@@ -65,15 +139,9 @@
 		opacity: 0.5;
 }
 .button {
-        margin: 0px;
-		width: 55px;
-		height: 25px;
 	    position: fixed;		
 	    top: 10px;
-        left: 165px;
-		right: 0px;
-        padding: 0px;
-		opacity: 1.5;
+        left: 10px;
 }
 .earth {
         margin: 0px;
@@ -85,6 +153,11 @@
 		right: 0px;
         padding: 0px;
 		opacity: 1.5;
+}
+.zoom {
+	    position: fixed;		
+	    top: 200px;
+        left: 100px;
 }
 input[type="text"] {
   font-family: monospace;
@@ -140,10 +213,13 @@ filterInput {
 }  
 </style>
 
-<!--<script 
-type="text/javascript" 
-src="./js/TagCloud.js">
-</script>-->
+<style>
+.dropmenu {
+	    position:fixed;		
+	    top:10px;
+        left:10px;
+}
+</style>
 
 <script type="importmap">
     {
@@ -165,12 +241,12 @@ src="./js/TagCloud.js">
 <form
 class="earth"
 id="secure-form-answer"
-action="./vandal.php" 
+action="./officer.php" 
 method="post">	
 <div id="inputWrapper">
 <input
 class="earth"
-style="position:center;top:50px;left:90px;width:200px;"
+style="position:center;top:70px;left:90px;width:200px;"
 id="filterInput"
 onkeyup="titleInput()"
 autocomplete="true"
@@ -182,7 +258,7 @@ name="secure-form-answer-Human"
 maxlength="524288" 
 value=""
 aria-label="search"  
-placeholder="Add Keyword to vandalize" 
+placeholder="Add Keyword to protect" 
 x-webkit-speech
 required>
 </div>	
@@ -245,12 +321,12 @@ color: blue;">
 <!-- <script> var msg = new SpeechSynthesisUtterance('connected'); window.speechSynthesis.speak(msg); </script> -->
 <!-- content -->
 <!--<img src="../img/core.webp" class="core" style="background: transparent;">-->
-<a href="./vandal.html">
+<a href="./officerzoomout.html">
 <img src="./img/aim2.png" class="earth" style="top: 150px;left: 160px;background: transparent;">
 </a>
-<a href="./index.html">
-<img src="./img/favicon.ico" class="favicon">
-</a>
+<p class="zoom">
+<br>touch crosshair to zoom out
+</p>
 <!--<iframe 
     class="content"
     style="position: absolute;
@@ -262,7 +338,7 @@ width: 0vh;
 height: 0vh; 
 border: none"
 
-        src="https://www.youtube.com/embed?listType=playlist&list=PLwMe8hyy9osKekO6MMcxvX7ZE96SQAEyr&si=yxbZvZtQb2ry3LP7&autoplay=1&loop=1"
+src="https://www.youtube.com/embed?listType=playlist&list=PLwMe8hyy9osIsMqTrT_7S6NQ9NJVLCBZV&si=pBQXH_WEknERpnx3&autoplay=1&loop=1"
     title="playlist" 
 	frameborder="0" 
 	allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
@@ -281,6 +357,36 @@ src="./js/tagcloudlog.js">
 <!-- Joystick -->
 <div id="joystick">
     <div id="joystick-handle"></div>
+</div>
+
+<button id="shootButton" style="
+    position: fixed;
+    bottom: 50px;
+    right: 50px;
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 0, 0, 0.7);
+    border-radius: 50%;
+    font-size: 18px;
+    color: white;
+    border: none;
+">Shoot</button>
+
+<div 
+class="dropmenu"
+>
+<div class="dropdown">
+    <button class="dropbtn">Menu
+        <span class="caret"></span>
+    </button>
+    <div class="dropdown-menu">
+        <div class="dropdown-header">Welcome back, Officer</div>
+         <a href="./index.html">Home</a>
+                <div class="dropdown-header">Data Tools</div>
+		<a href="./recentchanges.html">Recent Changes</a>
+		<a href="./about.html">About</a>
+    </div>
+</div>
 </div>
 
 <script type="module">
@@ -352,8 +458,8 @@ src="./js/tagcloudlog.js">
 
     joystick.addEventListener("touchmove", (event) => {
         const touch = event.touches[0];
-        moveX = (touch.clientX - touchStartX) / 50;
-        moveZ = (touch.clientY - touchStartY) / 50;
+        moveX = (touch.clientX - touchStartX) / -50;
+        moveZ = (touch.clientY - touchStartY) / -50;
 
         handle.style.transform = `translate(${moveX * 20}px, ${moveZ * 20}px)`;
     });
@@ -363,6 +469,79 @@ src="./js/tagcloudlog.js">
         moveZ = 0;
         handle.style.transform = "translate(0px, 0px)";
     });
+	
+const bullets = [];
+const bulletSpeed = 0.5;
+
+// Create AI Enemy (Example)
+const enemyGeometry = new THREE.BoxGeometry(2, 3, 2);
+const enemyMaterial = new THREE.MeshStandardMaterial({ color: 0x0000ff });
+const enemy = new THREE.Mesh(enemyGeometry, enemyMaterial);
+enemy.position.set(10, 1.5, -10);
+scene.add(enemy);
+
+// Function to Shoot Bullet
+function shootBullet() {
+    const bulletGeometry = new THREE.SphereGeometry(0.2, 8, 8);
+    const bulletMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+    const bullet = new THREE.Mesh(bulletGeometry, bulletMaterial);
+    
+    bullet.position.copy(player.position);
+    bullet.velocity = new THREE.Vector3(0, 0, -bulletSpeed).applyQuaternion(player.quaternion);
+    
+    bullets.push(bullet);
+    scene.add(bullet);
+}
+
+// Button Event Listener
+document.getElementById("shootButton").addEventListener("touchstart", shootBullet);
+
+// Update Bullets in the Game Loop
+function updateBullets() {
+    for (let i = bullets.length - 1; i >= 0; i--) {
+        bullets[i].position.add(bullets[i].velocity);
+
+        // Check for Collision with Enemy
+        if (bullets[i].position.distanceTo(enemy.position) < 1.5) {
+            scene.remove(enemy);
+            scene.remove(bullets[i]);
+            bullets.splice(i, 1);
+            console.log("Enemy hit!");
+        }
+
+        // Remove bullets that go too far
+        if (bullets[i].position.length() > 50) {
+            scene.remove(bullets[i]);
+            bullets.splice(i, 1);
+        }
+    }
+}
+
+const enemies = [];
+const enemyBullets = [];
+const enemyBulletSpeed = 0.3;
+const enemyShootInterval = 2000; // Enemies shoot every 2 seconds
+
+// Create Multiple AI Enemies
+function createEnemy(x, z) {
+    const enemyGeometry = new THREE.BoxGeometry(2, 3, 2);
+    const enemyMaterial = new THREE.MeshStandardMaterial({ color: 0x0000ff });
+    const enemy = new THREE.Mesh(enemyGeometry, enemyMaterial);
+    
+    enemy.position.set(x, 1.5, z);
+    enemies.push(enemy);
+    scene.add(enemy);
+
+    // Set a timer to make the enemy shoot
+    setInterval(() => enemyShoot(enemy), enemyShootInterval);
+}
+
+// Spawn 5 enemies at random positions
+for (let i = 0; i < 5; i++) {
+    createEnemy(Math.random() * 40 - 20, Math.random() * 40 - 20);
+}
+
+
 
     // Game Loop
     function animate() {
@@ -371,7 +550,7 @@ src="./js/tagcloudlog.js">
         // Move player
         player.position.x += moveX * 0.1;
         player.position.z += moveZ * 0.1;
-
+        updateBullets();
         updateCamera();
         renderer.render(scene, camera);
     }
@@ -380,3 +559,6 @@ src="./js/tagcloudlog.js">
 
 </body>
 </html>
+
+
+    

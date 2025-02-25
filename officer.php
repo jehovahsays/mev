@@ -18,7 +18,6 @@ header( 'Expires: 0' );
 header( 'Referrer-Policy:  same-origin' );
 header( 'Accept-Language: en-US,en;q=0.5' );
 header( 'Connection: Keep-alive' );
-require('./patrolofficer.php');
 $answer1 = $_POST['secure-form-answer-Human'];        
 $totalCorrect = 1;  
 if ($answer1 == "Human") { $totalCorrect++; }            
@@ -73,16 +72,58 @@ foreach($_POST as $variable => $value)
 	. "\""
 	. "><center><button>Menu</button></center></a><br><br>"
 	. "<br><br>"
-	. "$value is protected<br>"
-	. "<script> var msg = new SpeechSynthesisUtterance('$value is protected'); window.speechSynthesis.speak(msg); </script>"
+	. "officer protected $value<br>"
+	. "<script> var msg = new SpeechSynthesisUtterance('officer protected $value'); window.speechSynthesis.speak(msg); </script>"
 	. "</body>"
 	. "<html>");
+}
+
+foreach($_POST as $variable => $value) 
+{
+	$value = str_replace(' ', '_', $value);
+	$handle = fopen("./recentchanges.html", "a");
+	fwrite($handle, 
+	  "<br>officer protected $value<br><a href=" 
+	. "\"" 
+	. "./en/"
+	. $value
+	. ".html" 
+	. "\"" 
+	. ">"
+	. "view page"
+	. "</a><br><br>"
+	. "\r\n");
 }	
 
-  echo "<meta name='viewport' content='width=device-width'>Click the link to visit the webpage you protected for the keyword $value <br><br> <a href='./en/$value.html'>$value</a><br><br>";
- echo "<body onload='loadout()'><script>function loadout(){window.location.href = './en/$value.html'}</script>";
- //echo "<body onload='loadout()'><script>function loadout(){window.location.href = './officer.html'}</script>"; 
- echo "<script> var msg = new SpeechSynthesisUtterance('you protected the keyword $value'); window.speechSynthesis.speak(msg); </script>";		
+foreach($_POST as $variable => $value) 
+{    
+    $value = str_replace(' ', '_', $value);	
+	$handle = fopen("./js/search.json", "a");
+	// load the data and delete the line from the array 
+	$lines = file('./js/search.json'); 
+	$last = sizeof($lines) - 1 ; 
+	unset($lines[$last]); 
+	// write the new data to the file 
+	file_put_contents('./js/search.json', $lines); 
+	$value = str_replace(' ', '_', $value);
+	fwrite($handle, 
+      ","	
+	. "\""
+	. $value
+	. "\""	
+	. ":"
+	. "\""
+	. "en/"
+	. $value
+    . "\""
+	. "\n"
+    . "}}}");
+}
+
+  echo "<meta name='viewport' content='width=device-width'>Click the link to visit the webpage officer protected for the keyword $value <br><br> <a href='./en/$value.html'>$value</a><br><br>";
+  echo "<body onload='loadout()'><script>function loadout(){window.location.href = './en/$value.html'}</script>";
+  //echo "<body onload='loadout()'><script>function loadout(){window.location.href = './officer.html'}</script>"; 
+  echo "<script> var msg = new SpeechSynthesisUtterance('officer protected the keyword $value'); window.speechSynthesis.speak(msg); </script>";		
 fclose($handle);
 exit();
 ?>

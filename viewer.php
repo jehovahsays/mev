@@ -30,7 +30,7 @@ foreach($_POST as $variable => $value)
 	if (file_exists($file_pointer))  
 	{ 
 	echo "The file $file_pointer already exists <br>"; 
-	echo "<meta name='viewport' content='width=device-width'>Click the link to visit the webpage you created for the keyword<br><br><a href='./en/$value'>$value</a><br><br>";
+	echo "<meta name='viewport' content='width=device-width'>Click the link to visit the webpage viewer created for the keyword $value<br><br><a href='./en/$value'>$value</a><br><br>";
 	echo "<script> var msg = new SpeechSynthesisUtterance('the keyword $value already exists'); window.speechSynthesis.speak(msg); </script>";
 	//echo "<body onload='loadout()'><script>function loadout(){window.location.href = './index.html'}</script>";	
 	echo "<body onload='loadout()'><script>function loadout(){window.location.href = './en/$value.html'}</script>";
@@ -51,7 +51,7 @@ foreach($_POST as $variable => $value)
 	. "content=\"width=device-width\">"
 	. "<style>"
 	. "/* mobile */"
-	. ".favicon {"
+	. ".button {"
 	. "top:0px; "
 	. "left:0px;"
 	. "position:fixed;"
@@ -62,16 +62,7 @@ foreach($_POST as $variable => $value)
 	. "</title>"
 	. "</head>"
 	. "<body>"
-	. "<a href="
-	. "\""
-	. "../index.html"
-	. "\""
-	. ">"
-	. "<img src="
-	. "\""
-	. "../img/favicon.ico"
-	. "\""
-	. "></a><br><br>"
+	. "<br><br>"
 	. "$value"
 	. "<br><br><a href="
 	. "\"" 
@@ -81,7 +72,7 @@ foreach($_POST as $variable => $value)
 	. "\"" 
 	. "><button>delete this keyword</button></a>"
 	. "<br><br>" 
-	. "<script> var msg = new SpeechSynthesisUtterance('$value'); window.speechSynthesis.speak(msg); </script>"
+	. "<script> var msg = new SpeechSynthesisUtterance('viewer created $value'); window.speechSynthesis.speak(msg); </script>"
 	. "</body>"
 	. "<html>");
 }	
@@ -89,30 +80,50 @@ foreach($_POST as $variable => $value)
 	foreach($_POST as $variable => $value) 
 {
 	$value = str_replace(' ', '_', $value);
-	$handle = fopen("./index.html", "a");
+	$handle = fopen("./recentchanges.html", "a");
 	fwrite($handle, 
-	  "<a href=" 
+	  "<br>viewer created $value<br><a href=" 
 	. "\"" 
 	. "./en/"
 	. $value
 	. ".html" 
 	. "\"" 
-	. "class=" 
-	. "\"" 
-	. "titleInput" 
-	. "\"" 
-	. ">" 
-	. "<button>"
-	. $value
-    . "</button>"	
-	. "</a>"
-	. "\r\n");
+	. ">"
+	. "view page"
+	. "</a><br><br>"
+	. "\r\n");	
 }
 
- echo "<meta name='viewport' content='width=device-width'>Click the link to visit the webpage you created for the keyword $value <br><br> <a href='./en/$value.html'>$value</a><br><br>";
- echo "<body onload='loadout()'><script>function loadout(){window.location.href = '../en/$value.html'}</script>";
+foreach($_POST as $variable => $value) 
+{    
+    $value = str_replace(' ', '_', $value);	
+	$handle = fopen("./js/search.json", "a");
+	// load the data and delete the line from the array 
+	$lines = file('./js/search.json'); 
+	$last = sizeof($lines) - 1 ; 
+	unset($lines[$last]); 
+	// write the new data to the file 
+	file_put_contents('./js/search.json', $lines); 
+	$value = str_replace(' ', '_', $value);
+	fwrite($handle, 
+      ","	
+	. "\""
+	. $value
+	. "\""	
+	. ":"
+	. "\""
+	. "en/"
+	. $value
+    . "\""
+	. "\n"
+    . "}}}");
+}
+
+ echo "<meta name='viewport' content='width=device-width'>Click the link to visit the webpage viewer created for the keyword $value <br><br> <a href='./en/$value.html'>$value</a><br><br>";
+ echo "<body onload='loadout()'><script>function loadout(){window.location.href = './en/$value.html'}</script>";
  //echo "<body onload='loadout()'><script>function loadout(){window.location.href = './officer.html'}</script>"; 
- echo "<script> var msg = new SpeechSynthesisUtterance('you created the keyword $value'); window.speechSynthesis.speak(msg); </script>";		
+ echo "<script> var msg = new SpeechSynthesisUtterance('viewer created the keyword $value'); window.speechSynthesis.speak(msg); </script>";		
 fclose($handle);
+clearstatcache();
 exit();
 ?>

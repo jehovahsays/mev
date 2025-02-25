@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>vandal</title>
+    <title>officer</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     
 <style>
-.favicon{
-   position: fixed;
-   top:0;
-   left: 0;
+.dropmenu {
+	    position:fixed;		
+	    top:10px;
+        left:10px;
 }
 </style>
 	
@@ -30,17 +30,6 @@
         padding: 0px;
 		opacity: 0.5;
 }
-.button {
-        margin: 0px;
-		width: 55px;
-		height: 25px;
-	    position: fixed;		
-	    top: 10px;
-        left: 165px;
-		right: 0px;
-        padding: 0px;
-		opacity: 1.5;
-}
 .earth {
         margin: 0px;
 		width: 55px;
@@ -51,6 +40,16 @@
 		right: 0px;
         padding: 0px;
 		opacity: 1.5;
+}
+.button {
+	    position: fixed;		
+	    top: 10px;
+        left: 10px;
+}
+.zoom {
+	    position: fixed;		
+	    top: 200px;
+        left: 100px;
 }
 input[type="text"] {
   font-family: monospace;
@@ -106,6 +105,89 @@ filterInput {
 }  
 </style>
 
+<style>
+/* Dropdown container DIV */
+.dropdown {
+    position: relative;
+    display: inline-block;
+	top:1px;
+	left:1px;
+}
+
+/* Dropdown button */
+.dropbtn {
+    display: inline-block;
+    font-weight: 400;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: 1px solid transparent;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .25rem;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    user-select: none;
+    outline: 0;
+    transition: .15s ease-in-out;
+}
+
+.dropbtn:hover {
+    background-color: #0069d9;
+}
+
+/* Dropdown menu (Hidden by Default) */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 160px;
+    padding: 8px 0;
+    background: white;
+    box-shadow: 0 1px 8px 2px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+/* Links inside the dropdown menu */
+.dropdown-menu a {
+    color: #000;
+    padding: 10px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Change bg-color of dropdown links on hover */
+.dropdown-menu a:hover {
+    background-color: #f1f1f1;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+/* Caret */
+.caret {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    vertical-align: middle;
+    border-top: 6px dashed;
+    border-right: 6px solid transparent;
+    border-left: 6px solid transparent;
+}
+
+/* Dropdown menu Header */
+.dropdown-menu .dropdown-header {
+    color: #777;
+    font-size: .8rem;
+    padding: 8px 16px;
+}
+</style>
+
 <!--<script 
 type="text/javascript" 
 src="./js/TagCloud.js">
@@ -128,15 +210,16 @@ src="./js/TagCloud.js">
 <body>
 		<div id="info">
 		<div id="inputWrapper">
+		
 <form
 class="earth"
 id="secure-form-answer"
-action="./vandal.php" 
+action="./officer.php" 
 method="post">	
 <div id="inputWrapper">
 <input
 class="earth"
-style="position:center;top:50px;left:90px;width:200px;"
+style="position:center;top:70px;left:90px;width:200px;"
 id="filterInput"
 onkeyup="titleInput()"
 autocomplete="true"
@@ -148,7 +231,7 @@ name="secure-form-answer-Human"
 maxlength="524288" 
 value=""
 aria-label="search"  
-placeholder="Add Keyword to vandalize" 
+placeholder="Add Keyword to protect" 
 x-webkit-speech
 required>
 </div>	
@@ -211,38 +294,34 @@ color: blue;">
 <!-- <script> var msg = new SpeechSynthesisUtterance('connected'); window.speechSynthesis.speak(msg); </script> -->
 <!-- content -->
 <!--<img src="../img/core.webp" class="core" style="background: transparent;">-->
-<a href="./player1.html">
+<a href="./officerzoomin.html">
 <img src="./img/aim2.png" class="earth" style="top: 150px;left: 160px;background: transparent;">
 </a>
-<a href="./index.html">
-<img src="./img/favicon.ico" class="favicon">
-</a>
-<!--<iframe 
-    class="content"
-    style="position: absolute;
-padding: 0px;
-margin: 0px;
-top: 234px;
-left: 110px;	
-width: 0vh; 
-height: 0vh; 
-border: none"
+<p class="zoom">
+<br>touch crosshair to zoom in
+</p>
 
-        src="https://www.youtube.com/embed?listType=playlist&list=PLwMe8hyy9osKekO6MMcxvX7ZE96SQAEyr&si=yxbZvZtQb2ry3LP7&autoplay=1&loop=1"
-    title="playlist" 
-	frameborder="0" 
-	allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-	allowfullscreen
-></iframe>-->
- <!--<script 
-type="text/javascript" 
-src="./js/tagcloudlog.js">
-</script>-->
 </div>
 
-
-
 		</div>
+		
+<div 
+class="dropmenu"
+>
+<div class="dropdown">
+    <button class="dropbtn">Menu
+        <span class="caret"></span>
+    </button>
+    <div class="dropdown-menu">
+        <div class="dropdown-header">Welcome back, Officer</div>
+         <a href="./index.html">Home</a>
+                <div class="dropdown-header">Data Tools</div>
+		<a href="./recentchanges.html">Recent Changes</a>
+		<a href="./about.html">About</a>
+    </div>
+</div>
+</div>
+		
 
 <script type="module">
 
@@ -410,10 +489,3 @@ src="./js/tagcloudlog.js">
 
 </body>
 </html>
-
-
-
-
-
-
-

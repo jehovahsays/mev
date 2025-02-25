@@ -72,7 +72,7 @@ foreach($_POST as $variable => $value)
 	. "\""
 	. "><center><button>Menu</button></center></a>"
 	. "<br><br>"
-	. "$value is not protected"
+	. "vandal vandalized $value"
 	. "<br><br><a href="
 	. "\"" 
 	. "../delete.php?action=delete&filename=./en/" 
@@ -80,9 +80,51 @@ foreach($_POST as $variable => $value)
 	. ".html" 
 	. "\"" 
 	. "><button>delete this keyword</button></a>"
-	. "<script> var msg = new SpeechSynthesisUtterance('$value is not protected'); window.speechSynthesis.speak(msg); </script>"
+	. "<script> var msg = new SpeechSynthesisUtterance('vandal vandalized $value'); window.speechSynthesis.speak(msg); </script>"
 	. "</body>"
 	. "<html>");
+}
+
+foreach($_POST as $variable => $value) 
+{
+	$value = str_replace(' ', '_', $value);
+	$handle = fopen("./recentchanges.html", "a");
+	fwrite($handle, 
+	  "<br>vandal vandalized $value<br><a href=" 
+	. "\"" 
+	. "./en/"
+	. $value
+	. ".html" 
+	. "\"" 
+	. ">"
+	. "view page"
+	. "</a><br><br>"
+	. "\r\n");
+}
+
+foreach($_POST as $variable => $value) 
+{    
+    $value = str_replace(' ', '_', $value);	
+	$handle = fopen("./js/search.json", "a");
+	// load the data and delete the line from the array 
+	$lines = file('./js/search.json'); 
+	$last = sizeof($lines) - 1 ; 
+	unset($lines[$last]); 
+	// write the new data to the file 
+	file_put_contents('./js/search.json', $lines); 
+	$value = str_replace(' ', '_', $value);
+	fwrite($handle, 
+      ","	
+	. "\""
+	. $value
+	. "\""	
+	. ":"
+	. "\""
+	. "en/"
+	. $value
+    . "\""
+	. "\n"
+    . "}}}");
 }
 
  echo "<meta name='viewport' content='width=device-width'>Click the link to visit the webpage you created for the keyword $value <br><br> <a href='./en/$value.html'>$value</a><br><br>";
