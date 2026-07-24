@@ -149,6 +149,8 @@
 	    if(typeof updateUserStatus === "function") updateUserStatus();
 	});
     </script>
+	
+	
 </head>
 
 
@@ -233,7 +235,7 @@
             } catch (e) {
                 console.error('Failed reading security perimeter token:', e);
             }
-            return 'Guest';
+            return '::1';
         }
 
         async function logScoreToRecentChanges() {
@@ -294,7 +296,7 @@
                 
                 mesh.position.set(baseX, 5, baseZ);
                 
-                const label = createUsername('a.js', '#ff0000');
+                const label = createUsername('::1', '#ff0000');
                 label.position.y = 4;
                 mesh.add(label);
                 
