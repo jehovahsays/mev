@@ -176,6 +176,19 @@
     <div id="joystick-right" class="joystick-container"><div id="handle-right" class="handle"></div></div>
     <button id="fire-button">FIRE</button>
 	
+	<!-- Add this inside your HTML body or style overlay area -->
+<div id="controller-selector" style="position: fixed; top: 55px; left: 125px; z-index: 1000; background: rgba(0,0,0,0.7); padding: 8px; border-radius: 5px; color: white; font-family: Arial;">
+    <label>Controller Mode: </label>
+    <select id="inputModeSelect" style="background: #222; color: #fff; padding: 4px; border-radius: 4px;">
+        <option value="auto">Auto-Detect / Multi-Input</option>
+        <option value="touch">Touchscreen Joysticks</option>
+        <option value="keyboard">Keyboard & Mouse (WASD)</option>
+        <option value="gamepad">Bluetooth Gamepad</option>
+    </select>
+</div>
+
+	
+	
     <script type="importmap">
         {
             "imports": {
@@ -191,6 +204,79 @@
         import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
         import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+		
+		// --- MULTI-CONTROLLER INPUT STATE ---
+const inputConfig = {
+    mode: 'auto',
+    keys: { KeyW: false, KeyS: false, KeyA: false, KeyD: false },
+    mouseLookActive: false
+};
+
+// Listen for mode changes from user UI
+document.getElementById('inputModeSelect')?.addEventListener('change', (e) => {
+    inputConfig.mode = e.target.value;
+});
+
+// A. Keyboard & Mouse Controller Logic
+window.addEventListener('keydown', (e) => {
+    if (inputConfig.mode === 'touch') return;
+    if (inputConfig.keys.hasOwnProperty(e.code)) inputConfig.keys[e.code] = true;
+    if (e.code === 'Space') handlePlayerShoot();
+});
+
+window.addEventListener('keyup', (e) => {
+    if (inputConfig.keys.hasOwnProperty(e.code)) inputConfig.keys[e.code] = false;
+});
+
+window.addEventListener('mousedown', (e) => {
+    if (inputConfig.mode === 'touch') return;
+    if (e.target.tagName !== 'BUTTON' && !e.target.closest('.joystick-container') && !e.target.closest('.lil-gui')) {
+        renderer.domElement.requestPointerLock();
+        inputConfig.mouseLookActive = true;
+    }
+});
+
+document.addEventListener('mousemove', (e) => {
+    if ((inputConfig.mode === 'keyboard' || inputConfig.mode === 'auto') && document.pointerLockElement === renderer.domElement) {
+        lookX = e.movementX * 0.01; // Feeds directly into your character rotation look vector
+    }
+});
+
+// B. Bluetooth Gamepad Controller Poll Engine
+function pollBluetoothControllers() {
+    if (inputConfig.mode === 'touch') return;
+    
+    const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+    for (let i = 0; i < gamepads.length; i++) {
+        const gp = gamepads[i];
+        if (!gp) continue;
+
+        const deadzone = 0.15;
+        // Left analog stick for movement
+        let axisX = gp.axes[0];
+        let axisZ = gp.axes[1];
+        if (Math.abs(axisX) > deadzone) moveX = axisX;
+        if (Math.abs(axisZ) > deadzone) moveZ = axisZ;
+
+        // Right analog stick for looking/steering
+        let rightAxisX = gp.axes[2];
+        if (Math.abs(rightAxisX) > deadzone) {
+            lookX = rightAxisX * 0.5;
+        }
+
+        // Button 0 (A button on Xbox/Bluetooth pads) fires weapon
+        if (gp.buttons[0] && gp.buttons[0].pressed) {
+            if (!window.gpFirePressed) {
+                handlePlayerShoot();
+                window.gpFirePressed = true;
+            }
+        } else {
+            window.gpFirePressed = false;
+        }
+        break; // Process primary connected gamepad
+    }
+}
+
 
         let container, clock, gui, mixer, actions, activeAction, previousAction, camera, scene, renderer, model;
         let moveX = 0, moveZ = 0, lookX = 0, lookY = 0, characterRotationY = 0; 
@@ -729,17 +815,31 @@
         function animate() {
             const dt = clock.getDelta();
             if (mixer) mixer.update(dt);
+
+            // Poll hardware controllers if enabled
+            pollBluetoothControllers();
+
+            // Synthesize keyboard inputs into movement vectors if active
+            let computedMoveX = moveX + (inputConfig.keys.KeyD ? 1 : 0) - (inputConfig.keys.KeyA ? 1 : 0);
+            let computedMoveZ = moveZ + (inputConfig.keys.KeyS ? 1 : 0) - (inputConfig.keys.KeyW ? 1 : 0);
+
             if (model && !orbitMode && gameActive) {
+                // Apply rotation from mouse look or joystick look
                 characterRotationY -= lookX * dt * 3;
                 model.rotation.y = characterRotationY;
+                lookX = 0; // Reset look delta frame-by-frame
+
                 const fwd = new THREE.Vector3(0, 0, 1).applyAxisAngle(new THREE.Vector3(0, 1, 0), characterRotationY);
                 const side = new THREE.Vector3(1, 0, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), characterRotationY);
-                model.position.add(fwd.multiplyScalar(moveZ * dt * -15)).add(side.multiplyScalar(moveX * dt * -15));
+                
+                model.position.add(fwd.multiplyScalar(computedMoveZ * dt * -15))
+                             .add(side.multiplyScalar(computedMoveX * dt * -15));
                 
                 const offset = new THREE.Vector3(0, 5, -15).applyAxisAngle(new THREE.Vector3(0, 1, 0), characterRotationY);
                 camera.position.lerp(model.position.clone().add(offset), 0.1);
                 camera.lookAt(model.position.x, model.position.y + 2, model.position.z);
             }
+
             updateBullets(dt);
             updateBoss(dt);
             updateHealthPackages();

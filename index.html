@@ -1,240 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>localhost knowledge base</title>
-  <meta name="description" content="localhost knowledge base" />
-  <meta name="theme-color" content="#3366cc" />
-  <meta name="color-scheme" content="light dark" />
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>localhost</title>
+    <meta name="description" content="localhost knowledge base" />
+    
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; object-src 'none'; style-src 'self' 'unsafe-inline';">
+    <meta http-equiv="Referrer-Policy" content="no-referrer">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="Cache-Control" content="no-store, max-age=0">
+    
+    <style>
+        body { background-color: black; color: white; font-family: monospace; margin: 0; padding: 20px; }
 
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' blob:; object-src 'none'; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:; base-uri 'self'; form-action 'self';">
+        /* Navigation UI */
+        .menu-container { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 1000; text-align: center; }
+        #menu-toggle { display: none; }
+        .search-label { display: block; width: 266px; padding: 5px; background: #111; border: 1px solid #333; color: #666; cursor: pointer; font-size: 10px; text-transform: lowercase; }
 
+        .dropdown-content { display: none; list-style: none; padding: 0; margin: 0; background: #111; border: 1px solid #333; width: 266px; }
+        .dropdown-content li a { display: block; padding: 10px; color: peru; text-decoration: none; border-bottom: 1px solid #222; }
+        #menu-toggle:checked ~ .dropdown-content { display: block; }
 
-<meta http-equiv="Referrer-Policy" content="no-referrer">
+        /* Content Display (CSS Hash Logic) */
+        #linkList { margin-top: 120px; padding: 0; list-style: none; }
+        .titleInput { margin-bottom: 40px; display: none; }
+        .article-text { display: block; color: #aaa; line-height: 1.6; max-width: 600px; }
 
-<meta http-equiv="Permissions-Policy" content="microphone=(), camera=(), geolocation=()">
+        /* CSS :target selector handles page visibility without JS */
+        .titleInput:target, body:not(:has(:target)) #main { 
+            display: block !important; 
+            animation: fadeIn 0.8s forwards; 
+            border-left: 3px solid peru; 
+            padding-left: 15px; 
+        }
 
-  <link rel="manifest" href="./manifest.json">
-  
-  <link rel="stylesheet" href="./styles.css" type="text/css">
-  
-    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-  <link rel="icon" href="./icon-192.webp" type="image/webp" sizes="192x192">
-  <link rel="apple-touch-icon" href="./icon-192.webp">
-
-<script>
-  /**
-   * MEV Legacy Sentry
-   * Detects if the browser is 'Outdated' (Cannot handle ES6 logic)
-   * and redirects to the 'Less' interface for safety.
-   */
-  (function() {
-    var isLegacy = false;
-    try {
-      // Test for Arrow Functions and Default Parameters (ES6)
-      new Function("(a = 0) => a");
-    } catch (err) {
-      isLegacy = true;
-    }
-
-    // Also check for LocalStorage (Required for the Subconscious)
-    if (!window.localStorage) {
-      isLegacy = true;
-    }
-
-    if (isLegacy) {
-      console.log("Legacy Browser Detected. Redirecting to Less Interface...");
-      window.location.href = "./less.html";
-    }
-  })();
-</script>
-	
-	
-
-
-<script src="./dompurify.js" defer></script>
-
-<script src="js/config_vars.js" defer></script>
-<script src="js/storage_core.js" defer></script>
-<script src="js/core_functions.js" defer></script>
-<script src="js/event_listeners.js" defer></script>
-
-
-
-
-
-
+        .ui-btn { background: #222; color: peru; border: 1px solid #444; cursor: pointer; padding: 8px; font-family: monospace; width: 266px; margin-top: 5px; }
+    </style>
 </head>
-
-
 <body>
 
-
-<div id="offline-message">
-  ⚠️ You’re offline. Some features may be unavailable.
-</div>
-
-<header>
-  <button id="menu-btn" aria-label="Toggle menu navigation">☰</button>
-  <div id="ai-bar">
-    <input 
-      type="text" 
-      id="ai-input" 
-      placeholder="search or speak your query…" 
-      aria-label="Search or question input"
-      data-action="filter-sidebar"
-      list="search-suggestions">
-	
-	      <datalist id="search-suggestions">
-        <option value="Main_Page">
-        <option value="Formatting_Examples">
-      </datalist>
-
-    <button id="ai-button">OK</button>
-  </div>
-  
-
-  
-</header>
-
-
-<div id="find-view">
-    <div id="search-container">
-	<p id="search-note" style="font-size: 0.9em; margin-bottom: 10px;"></p>
-        <input
-            id="filterInput-find"
-            data-action="filter-findview" 
-            autocomplete="off"
-            autocorrect="off"  
-            autocapitalize="off" 
-            spellcheck="false"
-            type="text" 
-            placeholder="Search wiki pages..." 
-            aria-label="Search wiki pages" 
-            aria-describedby="search-note"
-            required>
-        
-        <ul id="page-list-find"></ul>
-        
-        <div id="status-message-find">Start typing to filter pages...</div>
+    <div class="menu-container">
+        <input type="checkbox" id="menu-toggle">
+        <label for="menu-toggle" class="search-label">click to browse keywords ▼</label>
+        <ul class="dropdown-content" id="nav-list">
+            <li><a href="#singleplayer">#singleplayer</a></li>
+            <li><a href="#multiplayer">#multiplayer</a></li>	
+            <li><a href="#searchengine">#searchengine</a></li>
+         </ul>
     </div>
-</div>
 
-<div id="container">
-  <nav id="sidebar">
+    <ul id="linkList">
+        <li class="titleInput" id="singleplayer">
+            <span class="article-text">
+                <h2>single player</h2>
+                <p>single player mode</p>
+                                <a href="/singleplayer/index.html#main"><button class="ui-btn" style="width: auto;">single player</button></a>
+            </span>
+        </li>
+		
+        <li class="titleInput" id="multiplayer">
+            <span class="article-text">
+                <h2>multiplayer</h2>
+                <p>multiplayer mode</p>
+                                <a href="/multiplayer/index.html#main"><button class="ui-btn" style="width: auto;">multiplayer</button></a>
+            </span>
+        </li>
 
-    <br>
-        <center>  
-            <button id="theme-toggle-btn" class="mev-button" style="width: auto; margin-left: 10px; padding: 5px 10px;">
-                Toggle "Less" Theme
-            </button>
-        </center>
- <br>
-     <hr/>
-    <h3>Navigation Filters</h3>
-    <ul id="quick-filters">
-        <li class="titleInput"><button data-page-target="Main_Page">Main_Page</button></li>
-        <li class="titleInput"><button data-nav-target="recent">Recent Changes</button></li>
-        <li class="titleInput"><button data-nav-target="settings">Settings</button></li>
-        <li class="titleInput"><button data-nav-target="about">About</button></li>
-        <li class="titleInput"><button data-page-target="Formatting_Examples">Wiki Formatting Help</button></li>
+        <li class="titleInput" id="searchengine">
+            <span class="article-text">
+                <h2>search engine</h2>
+                <p>search engine mode</p>
+                                <a href="/searchengine/index.html#main"><button class="ui-btn" style="width: auto;">search engine</button></a>
+            </span>
+        </li>
+		
+
+        <li class="titleInput" id="about">
+            <span class="article-text">
+                <h2>About</h2>
+                <p>
+				
+
+localhost is an offline‑first encyclopedia powered by your browser. It uses your browser local storage to save the data. No tracking, no server needed.
+
+Features
+
+Offline Editing and Viewing
+**Encrypted Storage (PIN required to unlock data)**
+Full-text search (for page titles)
+Voice Search Filtering
+Basic Markup (==Headers, ''Bold, ''Italics, [[Links]])
+Source Version: localhost v1.2.3
+				</p>
+            </span>	
+        </li>
+
+        <li class="titleInput" id="privacy">
+            <span class="article-text">
+                <h1>Privacy</h1>
+                <h2>2. Zero Third-Party Dependencies</h2>
+                <p>This application is built from scratch. No external trackers, analytics, or third-party scripts are permitted.</p>
+            </span>
+        </li>
+
     </ul>
-	
 
-    <hr />
-    <h3>Wiki Pages</h3>
-    <ul id="page-list"></ul>
-    
-    <button id="create-page-btn" class="edit-btn" style="width: 100%; margin-top: 10px;">+ New Page</button>
+<script>
+'use strict';
 
-    <div id="storage-bar">
-      <div id="storage-bar-inner"></div>
-    </div>
-  </nav>
+(function() {
+    // 1. Disable Right-Click Context Menu
+    document.addEventListener('contextmenu', event => event.preventDefault());
 
-  <main id="main-content-wrapper" itemscope itemtype="https://schema.org/WebPage">
-    <meta itemprop="url" content="https://github.com/jehovahsays/JehovahsaysNetworth">
-    <div id="page-container"></div> 
-  </main>
-</div>
+    // 2. Disable Inspection Keyboard Shortcuts
+    document.addEventListener('keydown', function(e) {
+        if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || (e.ctrlKey && e.keyCode === 85)) {
+            e.preventDefault();
+            console.warn("Security: Inspection shortcuts are restricted.");
+        }
+    });
 
-<footer>
-  <div id="status-indicator">🔴 Offline
-  </div>
-  <div id="ticker"><span id="ticker-content"></span></div>
-    <span id="last-updated" style="margin-left: auto;"></span>
+    // 3. The STOP! Security Warning
+    const warningTitle = "STOP!";
+    const warningText = "This is a developer feature. Copy-pasting code here is a scam and will compromise your data.";
+    console.log(`%c${warningTitle}`, "color: red; font-size: 50px; font-weight: bold; -webkit-text-stroke: 1px black;");
+    console.log(`%c${warningText}`, "color: peru; font-size: 16px; font-family: monospace;");
+})();
 
-</footer>
+// 4. URL Cleanup Logic
+if (window.location.pathname.endsWith('.html') || window.location.pathname.endsWith('.htm')) {
+    const cleanURL = window.location.href.replace(/index\.(html|htm)/, '');
+    window.history.replaceState(null, '', cleanURL);
+}
 
-
-
-
-<div id="mev-splash-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 9999; overflow: hidden;">
-    <div id="info" style="position: absolute; top: 10px; width: 100%; text-align: center; color: white; z-index: 100; pointer-events: none;"></div>
-
-	<a href="./map.html">
-<button 
-class="mev-button" 
-style="color: #ccc; margin-top: 10px; font-family: monospace;">
-	map
-		</button>
-		</a>	
-		
-	<a href="./play.html">
-<button 
-class="mev-button" 
-style="color: #ccc; margin-top: 10px; font-family: monospace;">
-	play
-		</button>
-		</a>		
-	
-	<a href="./less.html">
-<button 
-class="mev-button" 
-style="color: #ccc; margin-top: 10px; font-family: monospace;">
-	less mode
-		</button>
-		</a>
-		
-	<a href="./css.html">
-<button 
-class="mev-button" 
-style="color: #ccc; margin-top: 10px; font-family: monospace;">
-	css mode
-		</button>
-		</a>		
-		
-		
-        <noscript>
-            <p id="noscript-warning" style="text-align: center; color: red; padding: 20px;">
-                This application requires JavaScript. <br>
-                Please enable JavaScript for MEV Wiki to function.
-            </p>
-        </noscript>
-
-		
-		
-        <ul id="page-list-splash" style="list-style: none; padding: 0; margin: 10px 0;">
-
-
-
-
-		</ul>
-		
-        <div id="status-message-splash" style="color: #ccc; margin-top: 10px; font-family: monospace;">
-
-	
-		</div>
-    </div>
-
-
-
-
-
+// 5. Initial State Load
+window.addEventListener('load', () => {
+    if (!window.location.hash || window.location.hash === '#main') {
+        window.location.hash = 'main';
+        console.log("External Conscious Initialized.");
+    }
+});
+</script>
 </body>
 </html>
-
-

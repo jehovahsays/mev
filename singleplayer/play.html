@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <http-equiv="X-UA-Compatible" content="IE=Edge;chrome=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+
+    <meta http-equiv="Cache-Control" content="private, no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta http-equiv="Clear-Site-Data" content="*">
+  
+    <style>
+        body { margin: 0; overflow: hidden; touch-action: none; }
+        
+        .joystick-container {
+            position: fixed;
+            bottom: 50px;
+            width: 100px;
+            height: 100px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            touch-action: none;
+            z-index: 10;
+        }
+
+        #joystick-left { left: 50px; }
+        #joystick-right { right: 50px; }
+
+        .handle {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 255, 0.8);
+            border-radius: 50%;
+            left: 30px;
+            top: 30px;
+        }
+
+        #handle-right { background: rgba(255, 0, 0, 0.8); }
+
+        #fire-button {
+            position: fixed;
+            bottom: 180px;
+            right: 70px;
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 69, 0, 0.8);
+            border: 3px solid white;
+            border-radius: 50%;
+            color: white;
+            font-weight: bold;
+            font-family: Arial;
+            z-index: 15;
+            touch-action: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #orbit-controls-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            z-index: 100;
+        }
+
+        /* Top Center Responsive Minimap */
+        #minimap-ui {
+            position: fixed;
+            top: 0px;
+            left: 60%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.65);
+            border: 2px solid #0f0;
+            border-radius: 8px;
+            z-index: 500;
+            pointer-events: none;
+        }
+
+        .lil-gui { z-index: 2 !important; }
+
+        @media all and ( max-width: 640px ) {
+            .lil-gui.root { 
+                right: 0px;
+                top: auto;
+                max-height: 100%;
+                max-width: 30%;
+                bottom: 0px;
+            }
+        }
+		
+		#user-status-display {
+            position: fixed;
+            right: 20px;
+            top: 110px; 
+            width: 140px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #0f0;
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+            z-index: 1000;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+	
+    <title>play</title>	
+    <script>
+    (function () {
+      function showError(msg) {
+        const errorDiv = document.createElement('div');
+        errorDiv.style.position = 'fixed';
+        errorDiv.style.top = '0';
+        errorDiv.style.left = '0';
+        errorDiv.style.width = '100%';
+        errorDiv.style.backgroundColor = '#ff4c4c';
+        errorDiv.style.color = 'white';
+        errorDiv.style.fontFamily = 'Arial, sans-serif';
+        errorDiv.style.padding = '15px';
+        errorDiv.style.zIndex = '9999';
+        errorDiv.style.textAlign = 'center';
+        errorDiv.textContent = msg;
+        document.body.appendChild(errorDiv);
+      }
+
+      const canvas = document.createElement('canvas');
+      const webgl = !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+      if (!webgl) {
+        document.addEventListener('DOMContentLoaded', () => showError('WebGL not supported.'));
+      }
+      if (!navigator.gpu) {
+        document.addEventListener('DOMContentLoaded', () => showError('WebGPU not supported.'));
+      }
+    })();
+	
+	document.addEventListener("DOMContentLoaded", () => {
+	    if(typeof updateUserStatus === "function") updateUserStatus();
+	});
+    </script>
+	
+	
+</head>
+
+
+<body>  
+<div id="container">
+  <nav id="sidebar"></nav>
+
+  <div id="user-status-display" style="font-family: 'Courier New', monospace; color: #0f0; font-weight: bold;"></div>
+
+  <main id="main-content-wrapper" itemscope itemtype="https://schema.org/WebPage">
+    <meta itemprop="url" content="https://jehovahsays.github.io/jehovahsaysnetworth/">
+    <div id="page-container"></div> 
+  </main>
+
+  <canvas id="minimap-ui" width="120" height="120"></canvas>
+
+    <div id="info"></div>
+    <div id="orbit-controls-info">
+        <a href="./map.html" target="_blank" rel="noopener"><button class="infobox">Exit</button></a>
+    </div>
+        
+    <div id="joystick-left" class="joystick-container"><div id="handle-left" class="handle"></div></div>
+    <div id="joystick-right" class="joystick-container"><div id="handle-right" class="handle"></div></div>
+    <button id="fire-button">FIRE</button>
+	
+	<!-- Add this inside your HTML body or style overlay area -->
+<div id="controller-selector" style="position: fixed; top: 55px; left: 125px; z-index: 1000; background: rgba(0,0,0,0.7); padding: 8px; border-radius: 5px; color: white; font-family: Arial;">
+    <label>Controller Mode: </label>
+    <select id="inputModeSelect" style="background: #222; color: #fff; padding: 4px; border-radius: 4px;">
+        <option value="auto">Auto-Detect / Multi-Input</option>
+        <option value="touch">Touchscreen Joysticks</option>
+        <option value="keyboard">Keyboard & Mouse (WASD)</option>
+        <option value="gamepad">Bluetooth Gamepad</option>
+    </select>
+</div>
+
+	
+	
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "./examples/build/three.module.js",
+                "three/addons/": "./examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import Stats from 'three/addons/libs/stats.module.js';
+        import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+		
+		// --- MULTI-CONTROLLER INPUT STATE ---
+const inputConfig = {
+    mode: 'auto',
+    keys: { KeyW: false, KeyS: false, KeyA: false, KeyD: false },
+    mouseLookActive: false
+};
+
+// Listen for mode changes from user UI
+document.getElementById('inputModeSelect')?.addEventListener('change', (e) => {
+    inputConfig.mode = e.target.value;
+});
+
+// A. Keyboard & Mouse Controller Logic
+window.addEventListener('keydown', (e) => {
+    if (inputConfig.mode === 'touch') return;
+    if (inputConfig.keys.hasOwnProperty(e.code)) inputConfig.keys[e.code] = true;
+    if (e.code === 'Space') handlePlayerShoot();
+});
+
+window.addEventListener('keyup', (e) => {
+    if (inputConfig.keys.hasOwnProperty(e.code)) inputConfig.keys[e.code] = false;
+});
+
+window.addEventListener('mousedown', (e) => {
+    if (inputConfig.mode === 'touch') return;
+    if (e.target.tagName !== 'BUTTON' && !e.target.closest('.joystick-container') && !e.target.closest('.lil-gui')) {
+        renderer.domElement.requestPointerLock();
+        inputConfig.mouseLookActive = true;
+    }
+});
+
+document.addEventListener('mousemove', (e) => {
+    if ((inputConfig.mode === 'keyboard' || inputConfig.mode === 'auto') && document.pointerLockElement === renderer.domElement) {
+        lookX = e.movementX * 0.01; // Feeds directly into your character rotation look vector
+    }
+});
+
+// B. Bluetooth Gamepad Controller Poll Engine
+function pollBluetoothControllers() {
+    if (inputConfig.mode === 'touch') return;
+    
+    const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+    for (let i = 0; i < gamepads.length; i++) {
+        const gp = gamepads[i];
+        if (!gp) continue;
+
+        const deadzone = 0.15;
+        // Left analog stick for movement
+        let axisX = gp.axes[0];
+        let axisZ = gp.axes[1];
+        if (Math.abs(axisX) > deadzone) moveX = axisX;
+        if (Math.abs(axisZ) > deadzone) moveZ = axisZ;
+
+        // Right analog stick for looking/steering
+        let rightAxisX = gp.axes[2];
+        if (Math.abs(rightAxisX) > deadzone) {
+            lookX = rightAxisX * 0.5;
+        }
+
+        // Button 0 (A button on Xbox/Bluetooth pads) fires weapon
+        if (gp.buttons[0] && gp.buttons[0].pressed) {
+            if (!window.gpFirePressed) {
+                handlePlayerShoot();
+                window.gpFirePressed = true;
+            }
+        } else {
+            window.gpFirePressed = false;
+        }
+        break; // Process primary connected gamepad
+    }
+}
+
+
+        let container, clock, gui, mixer, actions, activeAction, previousAction, camera, scene, renderer, model;
+        let moveX = 0, moveZ = 0, lookX = 0, lookY = 0, characterRotationY = 0; 
+        let orbitControls, orbitMode = false;
+        let playerScore = 0, playerHealth = 10, playerSize = 1.0;
+        let bullets = [], gameActive = true;
+
+        let bosses = [];
+        let currentRound = 1;
+        let healthPackages = [];
+
+        // Minimap setup
+        const minimapCanvas = document.getElementById('minimap-ui');
+        const minimapCtx = minimapCanvas.getContext('2d');
+
+        const api = { state: 'Walking' };
+
+        function loadout() {
+            window.location.href = './map.html';
+        }
+
+        function createUsername(text, color) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 256; canvas.height = 64;
+            ctx.font = 'Bold 40px Arial';
+            ctx.fillStyle = color;
+            ctx.textAlign = 'center';
+            ctx.fillText(text, 128, 45);
+            const texture = new THREE.CanvasTexture(canvas);
+            const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture }));
+            sprite.scale.set(4, 1, 1);
+            return sprite;
+        }
+
+        function getActiveUsername() {
+            try {
+                const storedUser = localStorage.getItem('mev_wiki_auth_key') || localStorage.getItem('mev_active_session');
+                if (storedUser && storedUser.trim() !== '') {
+                    return storedUser.split(':')[0];
+                }
+            } catch (e) {
+                console.error('Failed reading security perimeter token:', e);
+            }
+            return '::1';
+        }
+
+        async function logScoreToRecentChanges() {
+            const currentName = getActiveUsername();
+            const storageKey = 'mev_wiki_changes';
+            try {
+                let currentChanges = [];
+                const rawData = localStorage.getItem(storageKey);
+                if (rawData) {
+                    currentChanges = JSON.parse(rawData);
+                }
+                const gameChangeEntry = {
+                    title: `🎯 Game High Score: ${playerScore} pts (${currentName})`,
+                    timestamp: new Date().toISOString(),
+                    type: 'Update'
+                };
+                currentChanges.unshift(gameChangeEntry);
+                localStorage.setItem(storageKey, JSON.stringify(currentChanges));
+            } catch (err) {
+                console.error('Failed writing tracking token:', err);
+            }
+        }
+
+        // Drop dynamic 🎁 item upon boss removal
+        function spawnHealthPackage(position) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 64; canvas.height = 64;
+            ctx.font = '48px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🎁', 32, 32); // Beautiful emoji rendering
+
+            const texture = new THREE.CanvasTexture(canvas);
+            const material = new THREE.SpriteMaterial({ map: texture });
+            const sprite = new THREE.Sprite(material);
+            sprite.position.copy(position);
+            sprite.position.y = 1.5; // Hovers at collection level
+            sprite.scale.set(3, 3, 3);
+            
+            scene.add(sprite);
+            healthPackages.push(sprite);
+        }
+
+        function spawnBossRound() {
+            bosses = [];
+            showNotification(`Round ${currentRound}: Spawned ${currentRound} Bosses!`);
+            
+            for (let i = 0; i < currentRound; i++) {
+                const geometry = new THREE.BoxGeometry(5, 5, 5);
+                const material = new THREE.MeshPhongMaterial({ color: 0xff0000 });
+                const mesh = new THREE.Mesh(geometry, material);
+                
+                const offsetX = (i - (currentRound - 1) / 2) * 20;
+                // Distribute relative to wherever the character currently stands
+                const baseZ = model ? model.position.z - 40 : -20;
+                const baseX = model ? model.position.x + offsetX : offsetX;
+                
+                mesh.position.set(baseX, 5, baseZ);
+                
+                const label = createUsername('::1', '#ff0000');
+                label.position.y = 4;
+                mesh.add(label);
+                
+                scene.add(mesh);
+                
+                bosses.push({
+                    mesh: mesh,
+                    health: 5,
+                    attackTimer: Math.random() * 2,
+                    seedOffset: i * 500
+                });
+            }
+        }
+
+        function createBullet(position, direction) {
+            const geometry = new THREE.SphereGeometry(0.5, 8, 8);
+            const material = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+            const bullet = new THREE.Mesh(geometry, material);
+            bullet.position.set(position.x, position.y + 2, position.z);
+            bullet.direction = direction.normalize();
+            bullet.speed = 2.0;
+            bullet.isPlayerBullet = true;
+            scene.add(bullet);
+            bullets.push(bullet);
+        }
+
+        function createBossBullet(bossMesh) {
+            if (!bossMesh || !gameActive || !model) return;
+            const bullet = new THREE.Mesh(new THREE.SphereGeometry(0.8, 8, 8), new THREE.MeshBasicMaterial({ color: 0xff4500 }));
+            bullet.position.copy(bossMesh.position);
+            const direction = new THREE.Vector3().subVectors(model.position, bossMesh.position).normalize();
+            bullet.direction = direction;
+            bullet.speed = 1.0;
+            bullet.isPlayerBullet = false;
+            scene.add(bullet);
+            bullets.push(bullet);
+        }
+
+        function updateBullets(deltaTime) {
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                const bullet = bullets[i];
+                bullet.position.addScaledVector(bullet.direction, bullet.speed);
+                
+                if (model && bullet.position.distanceTo(model.position) > 120) {
+                    scene.remove(bullet);
+                    bullets.splice(i, 1);
+                    continue;
+                }
+                
+                if (bullet.isPlayerBullet) {
+                    for (let b = bosses.length - 1; b >= 0; b--) {
+                        const targetBoss = bosses[b];
+                        if (bullet.position.distanceTo(targetBoss.mesh.position) < 3) {
+                            targetBoss.health--;
+                            scene.remove(bullet);
+                            bullets.splice(i, 1);
+                            
+                            if (targetBoss.health <= 0) {
+                                spawnHealthPackage(targetBoss.mesh.position);
+                                scene.remove(targetBoss.mesh);
+                                bosses.splice(b, 1);
+                                playerScore += 10;
+                                logScoreToRecentChanges();
+                                playerSize += 0.05;
+                                updatePlayerSize();
+                                showNotification("Boss Defeated! +10");
+                                
+                                if (bosses.length === 0) {
+                                    currentRound++;
+                                    setTimeout(spawnBossRound, 3000);
+                                }
+                            }
+                            break;
+                        }
+                    }
+                } else {
+                    if (model && bullet.position.distanceTo(model.position) < 2) {
+                        playerHealth--;
+                        scene.remove(bullet);
+                        bullets.splice(i, 1);
+                        if (playerHealth <= 0) {
+                            gameActive = false;
+                            loadout(); 
+                        }
+                    }
+                }
+            }
+        }
+
+        function updateBoss(deltaTime) {
+            if (!gameActive || !model) return;
+            for (let i = 0; i < bosses.length; i++) {
+                const boss = bosses[i];
+                const timeFactor = Date.now() * 0.001 + boss.seedOffset;
+                boss.mesh.position.y = 5 + Math.sin(timeFactor) * 1.5;
+                boss.mesh.lookAt(model.position);
+                
+                boss.attackTimer += deltaTime;
+                if (boss.attackTimer > 2.5) { 
+                    createBossBullet(boss.mesh);
+                    boss.attackTimer = 0;
+                }
+            }
+        }
+
+        function updateHealthPackages() {
+            if (!model || !gameActive) return;
+            for(let i = healthPackages.length - 1; i >= 0; i--) {
+                const pkg = healthPackages[i];
+                pkg.position.y = 1.5 + Math.sin(Date.now() * 0.003 + i) * 0.2;
+                
+                // Detection collision radius
+                if(model.position.distanceTo(pkg.position) < 3.0) {
+                    playerHealth += 25; // Gives exactly 25 health
+                    showNotification("Collected Care Package! +25 HP 🎁");
+                    scene.remove(pkg);
+                    healthPackages.splice(i, 1);
+                }
+            }
+        }
+
+        // Renders the real-time Minimap view cleanly with fixed coordinate positioning
+        function renderMinimap() {
+            minimapCtx.clearRect(0, 0, 120, 120);
+            
+            // Draw background color mapping space
+            minimapCtx.fillStyle = 'rgba(15, 30, 15, 0.7)';
+            minimapCtx.fillRect(0, 0, 120, 120);
+
+            if (!model) return;
+
+            const cx = 60;
+            const cz = 60;
+            const scale = 0.6; // Scale factor maps local coordinates cleanly
+
+            // Draw player centralized precisely at the center
+            minimapCtx.save();
+            minimapCtx.translate(cx, cz);
+            
+            // Rotate the entire radar view matching the character's internal perspective.
+            // This guarantees things forward in Three.js coordinates remain directly forward on the 2D plane layout.
+            minimapCtx.rotate(-characterRotationY);
+
+            // Draw enemies inside radar range relative to player's heading position matrix
+            minimapCtx.fillStyle = '#ff0000';
+            bosses.forEach(b => {
+                // Calculate position relative to the user
+                const dx = b.mesh.position.x - model.position.x;
+                const dz = b.mesh.position.z - model.position.z;
+                
+                // Map local coordinates directly to the 2D orientation grid
+                // In Three.js, -z goes straight forward, so we invert the depth axis projection matrix
+                const radarX = dx * scale;
+                const radarZ = dz * scale;
+                
+                // Keep points locked strictly bounded inside the square grid canvas element view
+                const mapX = Math.max(-54, Math.min(54, radarX));
+                const mapZ = Math.max(-54, Math.min(54, radarZ));
+                
+                minimapCtx.beginPath();
+                minimapCtx.arc(mapX, mapZ, 3.5, 0, Math.PI * 2);
+                minimapCtx.fill();
+            });
+
+            // Draw Green Triangle pointing straight forward (Upwards towards top border frame)
+            minimapCtx.fillStyle = '#00ff00';
+            minimapCtx.beginPath();
+            minimapCtx.moveTo(0, -7);   // Tip pointing front
+            minimapCtx.lineTo(-5, 5);   // Bottom Left
+            minimapCtx.lineTo(5, 5);    // Bottom Right
+            minimapCtx.closePath();
+            minimapCtx.fill();
+            
+            minimapCtx.restore();
+        }
+
+        function updatePlayerSize() {
+            if (model) model.scale.set(playerSize, playerSize, playerSize);
+        }
+
+        function createUI() {
+            const uiStyle = "position:absolute; color:white; font-family:Arial; font-weight:bold; background:rgba(0,0,0,0.7); padding:12px 20px; border-radius:10px;";
+            
+            const score = document.createElement('div');
+            score.id = 'scoreDisplay'; 
+            score.style = uiStyle + "top:10px; left:10px; font-size:18px;";
+            document.body.appendChild(score);
+            
+            const health = document.createElement('div');
+            health.id = 'healthDisplay'; 
+            health.style = uiStyle + "top:70px; left:10px; font-size:18px;";
+            document.body.appendChild(health);
+            
+            const notify = document.createElement('div');
+            notify.id = 'notification'; 
+            notify.style = "position:absolute; color:white; font-family:Arial; font-weight:bold; top:50%; left:50%; transform:translate(-50%,-50%); display:none; background:rgba(0,0,0,0.7); padding:20px; border-radius:10px;";
+            document.body.appendChild(notify);
+        }
+
+        function updateUI() {
+            document.getElementById('scoreDisplay').textContent = `Score: ${playerScore} (Round ${currentRound})`;
+            document.getElementById('healthDisplay').textContent = `Health: ${playerHealth}`;
+        }
+
+        function showNotification(message) {
+            const el = document.getElementById('notification');
+            el.textContent = message; el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 3000);
+        }
+
+        function handlePlayerShoot() {
+            if (gameActive && model) {
+                const direction = new THREE.Vector3(0, 0, 1).applyAxisAngle(new THREE.Vector3(0, 1, 0), characterRotationY);
+                createBullet(model.position.clone(), direction);
+            }
+        }
+
+        // Generates open world environments containing varied landscape regions, trees, and rocks
+        function createOpenWorld() {
+            // Master city center grid setup
+            const buildingMaterial = new THREE.MeshPhongMaterial({ color: 0x555555 });
+            for (let i = 0; i < 50; i++) {
+                const h = Math.random() * 10 + 5;
+                const b = new THREE.Mesh(new THREE.BoxGeometry(Math.random()*2+1, h, Math.random()*2+1), buildingMaterial);
+                b.position.set(Math.random()*80-40, h/2, Math.random()*80-40);
+                scene.add(b);
+            }
+
+            // Procedural Infinite Biome / Nature generation
+            const treeTrunkGeo = new THREE.CylinderGeometry(0.2, 0.4, 2, 8);
+            const treeTrunkMat = new THREE.MeshPhongMaterial({ color: 0x5c4033 });
+            const treeTopGeo = new THREE.ConeGeometry(1.5, 4, 8);
+            const treeTopMat = new THREE.MeshPhongMaterial({ color: 0x2e8b57 });
+            const rockGeo = new THREE.DodecahedronGeometry(1.5);
+            const rockMat = new THREE.MeshPhongMaterial({ color: 0x888888 });
+
+            // Scattered environment objects over a massive radius 
+            for (let i = 0; i < 350; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                // Position them outside the central city radius core safely
+                const radius = 50 + Math.random() * 450; 
+                const x = Math.cos(angle) * radius;
+                const z = Math.sin(angle) * radius;
+
+                if (Math.random() > 0.45) {
+                    // Assemble a complete procedural low-poly tree structure
+                    const treeFrame = new THREE.Group();
+                    const trunk = new THREE.Mesh(treeTrunkGeo, treeTrunkMat);
+                    trunk.position.y = 1;
+                    const top = new THREE.Mesh(treeTopGeo, treeTopMat);
+                    top.position.y = 3.5;
+                    treeFrame.add(trunk, top);
+                    treeFrame.position.set(x, 0, z);
+                    scene.add(treeFrame);
+                } else {
+                    // Populate varying boulder formations
+                    const rock = new THREE.Mesh(rockGeo, rockMat);
+                    rock.position.set(x, 0.4, z);
+                    rock.scale.set(Math.random() + 0.5, Math.random() * 2 + 0.5, Math.random() + 0.5);
+                    scene.add(rock);
+                }
+            }
+        }
+
+        // Builds dynamic procedural color materials tracking landscape geography variables smoothly
+        function createDynamicTerrain() {
+            const worldSize = 2000;
+            const segments = 120;
+            const geo = new THREE.PlaneGeometry(worldSize, worldSize, segments, segments);
+            
+            // Access configuration mapping arrays to paint colors dynamically based on vector distances
+            const colors = [];
+            const colorObj = new THREE.Color();
+            const pos = geo.attributes.position;
+
+            for (let i = 0; i < pos.count; i++) {
+                const vx = pos.getX(i);
+                const vy = pos.getY(i);
+                const distFromCenter = Math.sqrt(vx * vx + vy * vy);
+
+                if (distFromCenter < 90) {
+                    // Central City Foundation Surface Color
+                    colorObj.setHex(0xcbcbcb);
+                } else if (distFromCenter > 90 && distFromCenter < 280) {
+                    // Vibrant green natural fields exploration zones
+                    colorObj.setHex(0x3b7a57);
+                } else if (distFromCenter >= 280 && distFromCenter < 360) {
+                    // Warm sandy beach coastlines
+                    colorObj.setHex(0xeedd82);
+                } else {
+                    // Endless deep ocean blue boundary spaces
+                    colorObj.setHex(0x1d4e89);
+                }
+                colors.push(colorObj.r, colorObj.g, colorObj.b);
+            }
+
+            geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+            
+            const terrainMaterial = new THREE.MeshPhongMaterial({
+                vertexColors: true,
+                flatShading: true,
+                depthWrite: false
+            });
+
+            const floor = new THREE.Mesh(geo, terrainMaterial);
+            floor.rotation.x = -Math.PI / 2;
+            scene.add(floor);
+        }
+
+        function init() {
+            container = document.createElement('div');
+            document.body.appendChild(container);
+            camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.25, 600);
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xb0e0e6); // Switched to scenic light sky atmosphere colors
+            scene.fog = new THREE.Fog(0xb0e0e6, 60, 500);
+            clock = new THREE.Clock();
+
+            const hemi = new THREE.HemisphereLight(0xffffff, 0x8d8d8d, 3);
+            hemi.position.set(0, 50, 0);
+            scene.add(hemi);
+            const dir = new THREE.DirectionalLight(0xffffff, 3);
+            dir.position.set(10, 40, 20);
+            scene.add(dir);
+
+            createDynamicTerrain();
+            createOpenWorld();
+            scene.add(new THREE.GridHelper(180, 30, 0x000000, 0x000000));
+            
+            new GLTFLoader().load('./examples/models/gltf/RobotExpressive/RobotExpressive.glb', (gltf) => {
+                model = gltf.scene;
+                scene.add(model);
+                createGUI(model, gltf.animations);
+	
+                const currentSessionName = getActiveUsername();
+                const playerLabel = createUsername(currentSessionName, '#0033ff');
+                playerLabel.position.y = 6;
+                model.add(playerLabel);
+                orbitControls = new OrbitControls(camera, renderer.domElement);
+                orbitControls.enabled = false;
+                
+                spawnBossRound();
+            });
+
+            renderer = new THREE.WebGLRenderer({ antialias: false });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setAnimationLoop(animate);
+            container.appendChild(renderer.domElement);
+
+            window.addEventListener('resize', onWindowResize);
+            createUI();
+            setupDualJoysticks();
+
+            document.addEventListener('keydown', (e) => { if(e.code === 'Space') handlePlayerShoot(); });
+            document.addEventListener('mousedown', (e) => {
+                if (e.target.tagName !== 'BUTTON' && !e.target.closest('.joystick-container')) handlePlayerShoot();
+            });
+        }
+
+        function setupDualJoysticks() {
+            const leftJoy = document.getElementById('joystick-left'), rightJoy = document.getElementById('joystick-right');
+            const leftH = document.getElementById('handle-left'), rightH = document.getElementById('handle-right');
+
+            leftJoy.addEventListener("touchmove", (e) => {
+                const r = leftJoy.getBoundingClientRect();
+                moveX = (e.touches[0].clientX - (r.left + 50)) / 50;
+                moveZ = (e.touches[0].clientY - (r.top + 50)) / 50;
+                leftH.style.transform = `translate(${moveX * 25}px, ${moveZ * 25}px)`;
+            });
+
+            rightJoy.addEventListener("touchmove", (e) => {
+                const r = rightJoy.getBoundingClientRect();
+                lookX = (e.touches[0].clientX - (r.left + 50)) / 50;
+                lookY = (e.touches[0].clientY - (r.top + 50)) / 50;
+                rightH.style.transform = `translate(${lookX * 25}px, ${lookY * 25}px)`;
+            });
+
+            document.getElementById('fire-button').addEventListener("touchstart", (e) => { e.preventDefault(); handlePlayerShoot(); });
+
+            const stop = () => { moveX = 0; moveZ = 0; lookX = 0; lookY = 0; leftH.style.transform = rightH.style.transform = "translate(0,0)"; };
+            leftJoy.addEventListener("touchend", stop);
+            rightJoy.addEventListener("touchend", stop);
+        }
+
+        function createGUI(model, animations) {
+            gui = new GUI();
+            mixer = new THREE.AnimationMixer(model);
+            actions = {};
+            const states = ['Idle', 'Walking', 'Running', 'Dance', 'Death', 'Sitting', 'Standing'];
+            const emotes = ['Jump', 'Yes', 'No', 'Wave', 'Punch', 'ThumbsUp'];
+            
+            animations.forEach(clip => {
+                const action = mixer.clipAction(clip);
+                actions[clip.name] = action;
+                if (emotes.includes(clip.name) || states.indexOf(clip.name) >= 4) {
+                    action.clampWhenFinished = true;
+                    action.loop = THREE.LoopOnce;
+                }
+            });
+			
+            const sf = gui.addFolder('States');
+            sf.close();
+
+            sf.add(api, 'state').options(states).onChange(() => fadeToAction(api.state, 0.5));
+            const ef = gui.addFolder('Emotes');
+            ef.close();
+            gui.close();
+            emotes.forEach(name => {
+                api[name] = () => { fadeToAction(name, 0.2); mixer.addEventListener('finished', function restore() {
+                    mixer.removeEventListener('finished', restore); fadeToAction(api.state, 0.2);
+                });};
+                ef.add(api, name);
+            });
+            activeAction = actions['Walking']; activeAction.play();
+        }
+
+        function fadeToAction(name, duration) {
+            previousAction = activeAction; activeAction = actions[name];
+            if (previousAction !== activeAction) previousAction.fadeOut(duration);
+            activeAction.reset().setEffectiveTimeScale(1).setEffectiveWeight(1).fadeIn(duration).play();
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            const dt = clock.getDelta();
+            if (mixer) mixer.update(dt);
+
+            // Poll hardware controllers if enabled
+            pollBluetoothControllers();
+
+            // Synthesize keyboard inputs into movement vectors if active
+            let computedMoveX = moveX + (inputConfig.keys.KeyD ? 1 : 0) - (inputConfig.keys.KeyA ? 1 : 0);
+            let computedMoveZ = moveZ + (inputConfig.keys.KeyS ? 1 : 0) - (inputConfig.keys.KeyW ? 1 : 0);
+
+            if (model && !orbitMode && gameActive) {
+                // Apply rotation from mouse look or joystick look
+                characterRotationY -= lookX * dt * 3;
+                model.rotation.y = characterRotationY;
+                lookX = 0; // Reset look delta frame-by-frame
+
+                const fwd = new THREE.Vector3(0, 0, 1).applyAxisAngle(new THREE.Vector3(0, 1, 0), characterRotationY);
+                const side = new THREE.Vector3(1, 0, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), characterRotationY);
+                
+                model.position.add(fwd.multiplyScalar(computedMoveZ * dt * -15))
+                             .add(side.multiplyScalar(computedMoveX * dt * -15));
+                
+                const offset = new THREE.Vector3(0, 5, -15).applyAxisAngle(new THREE.Vector3(0, 1, 0), characterRotationY);
+                camera.position.lerp(model.position.clone().add(offset), 0.1);
+                camera.lookAt(model.position.x, model.position.y + 2, model.position.z);
+            }
+
+            updateBullets(dt);
+            updateBoss(dt);
+            updateHealthPackages();
+            updateUI();
+            renderMinimap();
+            renderer.render(scene, camera);
+        }
+
+        init();
+    </script>
+</div>
+</body>
+</html>
