@@ -18,11 +18,8 @@ function debounce(func, delay) {
 }
 
 /**
-
  * Actual Wiki Filtering Logic
-
  * This is where the perimeter hands off the "Cleaned" input to the UI
-
  */
 
 function performWikiSearch(query) {
@@ -67,9 +64,7 @@ function arrayBufferToBase64(buffer) {
 }
 
 /**
-
  * Derives a strong encryption key from a PIN using PBKDF2.
-
  */
 
 async function deriveKey(pin, salt) {
@@ -96,9 +91,7 @@ async function deriveKey(pin, salt) {
 }
 
 /**
-
  * Encrypts plaintext using the session's encryption key.
-
  */
 
 async function encryptData(plaintext) {
@@ -120,9 +113,7 @@ async function encryptData(plaintext) {
 }
 
 /**
-
  * Decrypts ciphertext using the session's encryption key.
-
  */
 
 async function decryptData(encryptedData) {
@@ -141,9 +132,7 @@ async function decryptData(encryptedData) {
 }
 
 // ==========================================================
-
 // 👤 AUTHENTICATION UTILITIES
-
 // ==========================================================
 
 function speak(text) {
@@ -244,21 +233,15 @@ async function showRecent() {
 }
 
 // ----------------------------------------------------
-
 // ✅ MODIFIED: showSettings function to use the dedicated Import_Data page
-
 // ----------------------------------------------------
 
 // ----------------------------------------------------
-
 // ✅ FIX 2: Corrected showProfile function to ensure unique listener binding
-
 // ----------------------------------------------------
 
 /**
-
  * PLACEHOLDER FUNCTION FOR PROFILE PAGE
-
  */
 
 async function showAbout() {
@@ -350,9 +333,7 @@ async function hashPin(pin) {
 }
 
 // ==========================================================
-
 // 👤 HARDENED AUTHENTICATION UTILITIES
-
 // ==========================================================
 
 // Attach the Auth functions to the global scope for dynamic button binding (e.g., in showProfile)
@@ -378,7 +359,7 @@ function setMainView(showMain) {
     }
 }
 
-// --- NEW FUNCTION: Render the Import/Export UI as a  Page ---
+// --- NEW FUNCTION: Render the Import/Export UI as a Page ---
 
 function renderImportPage() {
     return `
@@ -408,13 +389,13 @@ function renderImportPage() {
                 onclick="exportData(true)" 
                 class="block w-full text-center px-4 py-2 text-lg font-semibold rounded-lg text-white bg-green-500 hover:bg-green-600 mt-3"
             >
-                Download Content-Only Backup (Safe to Share)
+                Show Content-Only Backup (Safe to Share)
             </button>
             <button 
                 onclick="exportData(false)" 
                 class="block w-full text-center px-4 py-2 text-lg font-semibold rounded-lg text-white bg-blue-500 hover:bg-blue-600 mt-3"
             >
-                Download Full Backup (Includes Users & Pins)
+                Show Full Backup (Includes Users & Pins)
             </button>
         </section>
     `;
@@ -707,7 +688,7 @@ async function runImport() {
 
 // --- END PR 1 FIX ---
 
-// --- START PR 2 FIX: Safe Export Function (KEPT AS IS) ---
+// --- UPDATED EXPORT FIX: Display JSON directly in the import textarea to copy ---
 
 async function exportData(isContentOnly) {
     // 1. Load the full application state
@@ -720,43 +701,29 @@ async function exportData(isContentOnly) {
     };
 
     let exportData = { ...appState };
-    let fileName = `localhost-wiki-backup-${new Date().toISOString().slice(0, 10)}`;
 
     if (isContentOnly) {
         // 2. SANITIZE: Keep only content and public history
         delete exportData.users;
         delete exportData.currentUser;
-        // Do not delete 'changes' as that is often useful historical context
-        
-        fileName += '-content-only.json';
-    } else {
-        // 3. FULL BACKUP: Include everything (users, pinHash, etc.)
-        fileName += '-full.json';
     }
 
-    // 4. Create the JSON string
+    // 3. Create the JSON string
     const jsonString = JSON.stringify(exportData, null, 2);
-    const blob = new Blob([jsonString], { type: 'application/json' });
     
-    // 5. Trigger the download
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    // 4. Output directly into the textarea element for easy copying
+    const textareaField = document.getElementById('importDataInput');
+    if (textareaField) {
+        textareaField.value = jsonString;
+        textareaField.focus();
+        textareaField.select();
+    }
     
-    speak(`Exported data to ${fileName}`);
+    speak("Exported data to the text box for copying.");
 }
 
-// --- END PR 2 FIX ---
-
 // ==========================================================
-
 // 🚀 INITIALIZATION & EVENT BINDING (CSP-SAFE)
-
 // ==========================================================
 
 // Request persistent storage to prevent browser 'eviction'
